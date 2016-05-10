@@ -1,0 +1,63 @@
+function deploy_l2_vlan_infrastructure_controller()
+{
+    openstack-config --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
+    openstack-config --set /etc/neutron/neutron.conf DEFAULT service_plugins router
+
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 type_drivers flat,vlan
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 tenant_network_types
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 mechanism_drivers openvswitch
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 extension_drivers port_security
+
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_flat flat_networks provider
+
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vlan network_vlan_ranges provider
+
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+
+    openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini ovs bridge_mappings provider:br-provider
+
+    openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+
+    openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
+    openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata True
+
+    __enable_service neutron-server
+    __start_service neutron-server
+
+    ( su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+      --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron ) > /dev/null 2>&1
+
+    __enable_service openvswitch
+    __start_service openvswitch
+
+    __add_ovs_bridge_port br-provider ${vlan_nic}
+
+    __enable_service neutron-openvswitch-agent
+    __start_service neutron-openvswitch-agent
+
+    __enable_service neutron-l3-agent
+    __enable_service neutron-metadata-agent
+    __enable_service neutron-netns-cleanup
+    __enable_service neutron-ovs-cleanup
+
+    __start_service neutron-l3-agent
+    __start_service neutron-metadata-agent
+}
+
+function deploy_l2_vlan_infrastructure_compute()
+{
+    openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini ovs bridge_mappings provider:br-provider
+
+    openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+
+    __enable_service openvswitch
+    __start_service openvswitch
+
+    __add_ovs_bridge_port br-provider ${vlan_nic}
+
+    __enable_service neutron-openvswitch-agent
+    __enable_service neutron-netns-cleanup
+    __enable_service neutron-ovs-cleanup
+
+    __start_service neutron-openvswitch-agent
+}
