@@ -46,8 +46,30 @@ function __cleanup_systemd_permissions()
 	find /usr/lib/systemd/system -maxdepth 1 -type f -perm 755 -exec chmod 644 {} \;
 }
 
+function __finish_installation()
+{
+	__openstack_images
+	__openstack_flavors
+	__openstack_keypairs
+	__openstack_security_groups
+	__openstack_networks
+	__openstack_instance
+	__cleanup_systemd_permissions
+	echo ""
+    print -s " **** Installation completed succesfully **** "
+	echo ""
+	echo "Additional Information:"
+	echo " * To access the OpenStack Dashboard browse to : http://${api_address}"
+	echo " * You can find your credentials in the admin-openrc.sh in your home directory"
+}
+
 function __generate_config_file()
 {
+	if [[ $NETWORKING == "" ]]; then
+		echo "ERROR: Please specify networking with -n. Possible options are L2 or L3"
+		exit 1
+	fi
+
 	if [[ -f ./os-deploy.config ]]; then
 		echo "ERROR: There is already a configuration file in the current directory: os-deploy.config"
 		exit 1
@@ -58,7 +80,7 @@ function __generate_config_file()
 		EXT_NIC="eth2"
 		VLAN_NIC="eth3"
 
-		NETWORKING="L2"
+		NETWORKING=${NETWORKING}
 
 		VXLAN_NETWORK="10.199.52.0"
 
@@ -73,36 +95,36 @@ function __generate_config_file()
 		CINDER_ISCSI_PARTITION='sdb'
 		MANILA_ISCSI_PARTITION='sdc'
 
-		MYSQL_AODH_PASSWORD="password"
-		MYSQL_CINDER_PASSWORD="password"
-		MYSQL_DESIGNATE_PASSWORD="password"
-		MYSQL_GLANCE_PASSWORD="password"
-		MYSQL_HEAT_PASSWORD="password"
-		MYSQL_KEYSTONE_PASSWORD="password"
-		MYSQL_MANILA_PASSWORD="password"
-		MYSQL_MURANO_PASSWORD="password"
-		MYSQL_NEUTRON_PASSWORD="password"
-		MYSQL_NOVA_PASSWORD="password"
-		MYSQL_ROOT_PASSWORD="password"
+		MYSQL_AODH_PASSWORD=$(__generate_password)
+		MYSQL_CINDER_PASSWORD=$(__generate_password)
+		MYSQL_DESIGNATE_PASSWORD=$(__generate_password)
+		MYSQL_GLANCE_PASSWORD=$(__generate_password)
+		MYSQL_HEAT_PASSWORD=$(__generate_password)
+		MYSQL_KEYSTONE_PASSWORD=$(__generate_password)
+		MYSQL_MANILA_PASSWORD=$(__generate_password)
+		MYSQL_MURANO_PASSWORD=$(__generate_password)
+		MYSQL_NEUTRON_PASSWORD=$(__generate_password)
+		MYSQL_NOVA_PASSWORD=$(__generate_password)
+		MYSQL_ROOT_PASSWORD=$(__generate_password)
 
-		MONGOD_CEILOMETER_PASSWORD="password"
+		MONGOD_CEILOMETER_PASSWORD=$(__generate_password)
 
-		KEYSTONE_ADMIN_PASSWORD="password"
-		KEYSTONE_AODH_PASSWORD="password"
-		KEYSTONE_CEILOMETER_PASSWORD="password"
-		KEYSTONE_CINDER_PASSWORD="password"
-		KEYSTONE_DESIGNATE_PASSWORD="password"
-		KEYSTONE_GLANCE_PASSWORD="password"
-		KEYSTONE_HEAT_PASSWORD="password"
-		KEYSTONE_HEAT_DOMAIN_ADMIN_PASSWORD="password"
-		KEYSTONE_MANILA_PASSWORD="password"
-		KEYSTONE_MURANO_PASSWORD="password"
-		KEYSTONE_NEUTRON_PASSWORD="password"
-		KEYSTONE_NOVA_PASSWORD="password"
+		KEYSTONE_ADMIN_PASSWORD=$(__generate_password)
+		KEYSTONE_AODH_PASSWORD=$(__generate_password)
+		KEYSTONE_CEILOMETER_PASSWORD=$(__generate_password)
+		KEYSTONE_CINDER_PASSWORD=$(__generate_password)
+		KEYSTONE_DESIGNATE_PASSWORD=$(__generate_password)
+		KEYSTONE_GLANCE_PASSWORD=$(__generate_password)
+		KEYSTONE_HEAT_PASSWORD=$(__generate_password)
+		KEYSTONE_HEAT_DOMAIN_ADMIN_PASSWORD=$(__generate_password)
+		KEYSTONE_MANILA_PASSWORD=$(__generate_password)
+		KEYSTONE_MURANO_PASSWORD=$(__generate_password)
+		KEYSTONE_NEUTRON_PASSWORD=$(__generate_password)
+		KEYSTONE_NOVA_PASSWORD=$(__generate_password)
 
-		RABBITMQ_HOST="127.0.0.1"
+		RABBITMQ_HOST=$(hostname --ip-address)
 		RABBITMQ_USERID="openstack"
-		RABBITMQ_PASSWORD="password"
+		RABBITMQ_PASSWORD=$(__generate_password)
 
 		NTP_SERVERS=(
 						'0.centos.pool.ntp.org'
@@ -140,7 +162,7 @@ function __set_config_variables()
 		ext_nic=${EXT_NIC:-"eth2"}
 		vlan_nic=${VLAN_NIC:-"eth3"}
 
-		networking=${NETWORKING:-"L2"}
+		networking=${NETWORKING}
 
 		vxlan_network=${VXLAN_NETWORK:-127.0.0}
 
@@ -321,7 +343,7 @@ function configure_limits()
 
 function configure_repos()
 {
-	yum clean all
+	yum clean all > /dev/null 2>&1
 
 	egrep 'ip_resolve|proxy' /etc/yum.conf > /dev/null 2>&1
 	if [[ $? == 1 ]]; then

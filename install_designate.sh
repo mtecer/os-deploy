@@ -156,7 +156,7 @@ function __install_bind()
 	print -s "DONE"
 }
 
-function __install_designate__dashboard()
+function __install_designate_dashboard()
 {
 	mkdir -p /images/horizon
 	cd /images/horizon
@@ -268,7 +268,7 @@ function install_designate()
 	designate server-create --name ns.${dhcp_domain_name}.
 	designate domain-create --name ${dhcp_domain_name}. --email mtecer@netsuite.com
 
-	__install_designate__dashboard
+	__install_designate_dashboard
 
 	print -s "DONE"
 }

@@ -43,7 +43,7 @@ function install_cinder_api()
 	# systemctl restart openstack-cinder-volume
 	# systemctl restart openstack-cinder-backup
 
-	echo "export OS_VOLUME_API_VERSION=2" | tee -a /root/admin-openrc.sh
+	( echo "export OS_VOLUME_API_VERSION=2" | tee -a /root/admin-openrc.sh ) > /dev/null
 
 	print -s "DONE"
 }

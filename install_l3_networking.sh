@@ -13,11 +13,9 @@ function deploy_l3_vlan_infrastructure_controller()
 
     openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vlan network_vlan_ranges external,vlan
 
-    # openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_gre tunnel_id_ranges 32769:34000
-
     openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vxlan vni_ranges 65537:69999
 
-    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+    openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup firewall_driver iptables_hybrid
 }
 
 function deploy_l3_vlan_infrastructure_network()
@@ -29,13 +27,9 @@ function deploy_l3_vlan_infrastructure_network()
 
     openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini agent tunnel_types vxlan
     openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini agent l2_population True
-    # openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini agent arp_responder True
-
-    # openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
 
     openstack-config --set /etc/neutron/l3_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
     openstack-config --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge
-    # openstack-config --set /etc/neutron/l3_agent.ini DEFAULT agent_mode dvr_snat
 
     openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
     openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata True
@@ -76,43 +70,28 @@ function deploy_l3_vlan_infrastructure_compute()
     local tunnel_ip=$(ifconfig ${vxlan_nic} | grep inet | awk '{ print $2 }')
 
     openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini ovs local_ip ${tunnel_ip}
-    # openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini ovs bridge_mappings vlan:br-vlan,external:br-ex
     openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini ovs bridge_mappings vlan:br-vlan
 
     openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini agent tunnel_types vxlan
-    # openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini agent enable_distributed_routing True
     openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini agent l2_population True
-    # openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini agent arp_responder True
 
-    # openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
     openstack-config --set /etc/neutron/plugins/ml2/openvswitch_agent.ini securitygroup firewall_driver iptables_hybrid
-
-    # openstack-config --set /etc/neutron/l3_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
-    # openstack-config --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge
-    # openstack-config --set /etc/neutron/l3_agent.ini DEFAULT agent_mode dvr
-
-    # openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
-    # openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata True
-
-    # openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_ip ${api_address}
-    # openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret ${metadata_proxy_shared_secret}
 
     __enable_service openvswitch
     __start_service openvswitch
 
     __add_ovs_bridge_port br-tun ${vxlan_nic}
-    __add_ovs_bridge_port br-ex ${ext_nic}
+    # __add_ovs_bridge_port br-ex ${ext_nic}
     __add_ovs_bridge_port br-vlan ${vlan_nic}
 
     __enable_service neutron-openvswitch-agent
     __start_service neutron-openvswitch-agent
 
-    __enable_service neutron-l3-agent
+    # __enable_service neutron-l3-agent
     __enable_service neutron-metadata-agent
     __enable_service neutron-netns-cleanup
     __enable_service neutron-ovs-cleanup
 
-    __start_service neutron-l3-agent
+    # __start_service neutron-l3-agent
     __start_service neutron-metadata-agent
 }
-

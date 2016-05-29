@@ -100,105 +100,111 @@ function configure_endpoints()
 		openstack endpoint create --region RegionOne volumev2 admin http://${api_address}:8776/v2/%\(tenant_id\)s ) > /dev/null 2>&1
 	fi
 
-	print -n "\tCeilometer"
+	if [[ "${ORCHESTRATION}" == true ]]; then
+		print -n "\tCeilometer"
 
-	openstack service show ceilometer > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( openstack service create --name ceilometer --description "OpenStack Telemetry" metering
-		openstack user create --domain default --password ${keystone_ceilometer_password} ceilometer
-		openstack role add --project service --user ceilometer admin
+		openstack service show ceilometer > /dev/null 2>&1
+		if [[ $? == 1 ]]; then
+			( openstack service create --name ceilometer --description "OpenStack Telemetry" metering
+			openstack user create --domain default --password ${keystone_ceilometer_password} ceilometer
+			openstack role add --project service --user ceilometer admin
 
-		openstack endpoint create --region RegionOne metering public http://${api_address}:8777
-		openstack endpoint create --region RegionOne metering internal http://${api_address}:8777
-		openstack endpoint create --region RegionOne metering admin http://${api_address}:8777 ) > /dev/null 2>&1
+			openstack endpoint create --region RegionOne metering public http://${api_address}:8777
+			openstack endpoint create --region RegionOne metering internal http://${api_address}:8777
+			openstack endpoint create --region RegionOne metering admin http://${api_address}:8777 ) > /dev/null 2>&1
+		fi
+
+		print -n "\tAodh"
+
+		openstack service show aodh > /dev/null 2>&1
+		if [[ $? == 1 ]]; then
+			( openstack service create --name aodh --description "Telemetry" alarming
+			openstack user create --domain default --password ${keystone_aodh_password} aodh
+			openstack role add --project service --user aodh admin
+
+			openstack endpoint create --region RegionOne alarming public http://${api_address}:8042
+			openstack endpoint create --region RegionOne alarming internal http://${api_address}:8042
+			openstack endpoint create --region RegionOne alarming admin http://${api_address}:8042 ) > /dev/null 2>&1
+		fi
+
+		print -n "\tHeat"
+
+		(openstack service show heat && openstack service show heat-cfn) > /dev/null 2>&1
+		if [[ $? == 1 ]]; then
+			( openstack service create --name heat --description "Orchestration" orchestration
+			openstack service create --name heat-cfn --description "Orchestration"  cloudformation
+
+			openstack user create --domain default --password ${keystone_heat_password} heat
+			openstack role add --project service --user heat admin
+
+			openstack endpoint create --region RegionOne orchestration public http://${api_address}:8004/v1/%\(tenant_id\)s
+			openstack endpoint create --region RegionOne orchestration internal http://${api_address}:8004/v1/%\(tenant_id\)s
+			openstack endpoint create --region RegionOne orchestration admin http://${api_address}:8004/v1/%\(tenant_id\)s
+
+			openstack endpoint create --region RegionOne cloudformation public http://${api_address}:8000/v1
+			openstack endpoint create --region RegionOne cloudformation internal http://${api_address}:8000/v1
+			openstack endpoint create --region RegionOne cloudformation admin http://${api_address}:8000/v1
+
+			openstack domain create --description "Stack projects and users" heat
+			openstack user create --domain heat --password PwcBSrwEejnX7SP3M heat_domain_admin
+			openstack role add --domain heat --user heat_domain_admin admin
+
+			openstack role create heat_stack_owner
+			openstack role add --project admin --user admin heat_stack_owner
+
+			openstack role create heat_stack_user ) > /dev/null 2>&1
+		fi
 	fi
 
-	print -n "\tAodh"
+	if [[ "${DESIGNATE}" == true ]]; then
+		print -n "\tDesignate"
 
-	openstack service show aodh > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( openstack service create --name aodh --description "Telemetry" alarming
-		openstack user create --domain default --password ${keystone_aodh_password} aodh
-		openstack role add --project service --user aodh admin
+		openstack service show designate > /dev/null 2>&1
+		if [[ $? == 1 ]]; then
+			( openstack service create --name designate --description "Designate DNS Service" dns
+			openstack user create --domain default --password ${mysql_designate_password} designate
+			openstack role add --project service --user designate admin
 
-		openstack endpoint create --region RegionOne alarming public http://${api_address}:8042
-		openstack endpoint create --region RegionOne alarming internal http://${api_address}:8042
-		openstack endpoint create --region RegionOne alarming admin http://${api_address}:8042 ) > /dev/null 2>&1
+			openstack endpoint create --region RegionOne dns public http://${api_address}:9001
+			openstack endpoint create --region RegionOne dns internal http://${api_address}:9001
+			openstack endpoint create --region RegionOne dns admin http://${api_address}:9001 ) > /dev/null 2>&1
+		fi
 	fi
 
-	print -n "\tHeat"
+	if [[ "${MANILA}" == true ]]; then
+		print -n "\tManila"
 
-	(openstack service show heat && openstack service show heat-cfn) > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( openstack service create --name heat --description "Orchestration" orchestration
-		openstack service create --name heat-cfn --description "Orchestration"  cloudformation
+		(openstack service show manila && openstack service show manilav2) > /dev/null 2>&1
+		if [[ $? == 1 ]]; then
+			( openstack service create --name manila --description "OpenStack Shared File Systems" share
+			openstack service create --name manilav2 --description "OpenStack Shared File Systems" sharev2
+			openstack user create --domain default --password ${mysql_manila_password} manila
+			openstack role add --project service --user manila admin
 
-		openstack user create --domain default --password ${keystone_heat_password} heat
-		openstack role add --project service --user heat admin
+			openstack endpoint create --region RegionOne share public http://${api_address}:8786/v1/%\(tenant_id\)s
+			openstack endpoint create --region RegionOne share internal http://${api_address}:8786/v1/%\(tenant_id\)s
+			openstack endpoint create --region RegionOne share admin http://${api_address}:8786/v1/%\(tenant_id\)s
 
-		openstack endpoint create --region RegionOne orchestration public http://${api_address}:8004/v1/%\(tenant_id\)s
-		openstack endpoint create --region RegionOne orchestration internal http://${api_address}:8004/v1/%\(tenant_id\)s
-		openstack endpoint create --region RegionOne orchestration admin http://${api_address}:8004/v1/%\(tenant_id\)s
-
-		openstack endpoint create --region RegionOne cloudformation public http://${api_address}:8000/v1
-		openstack endpoint create --region RegionOne cloudformation internal http://${api_address}:8000/v1
-		openstack endpoint create --region RegionOne cloudformation admin http://${api_address}:8000/v1
-
-		openstack domain create --description "Stack projects and users" heat
-		openstack user create --domain heat --password PwcBSrwEejnX7SP3M heat_domain_admin
-		openstack role add --domain heat --user heat_domain_admin admin
-
-		openstack role create heat_stack_owner
-		openstack role add --project admin --user admin heat_stack_owner
-
-		openstack role create heat_stack_user ) > /dev/null 2>&1
+			openstack endpoint create --region RegionOne sharev2 public http://${api_address}:8786/v2/%\(tenant_id\)s
+			openstack endpoint create --region RegionOne sharev2 internal http://${api_address}:8786/v2/%\(tenant_id\)s
+			openstack endpoint create --region RegionOne sharev2 admin http://${api_address}:8786/v2/%\(tenant_id\)s ) > /dev/null 2>&1
+		fi
 	fi
 
-	print -n "\tDesignate"
+	if [[ "${MANILA}" == true ]]; then
+		print -n "\tMurano"
 
-	openstack service show designate > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( openstack service create --name designate --description "Designate DNS Service" dns
-		openstack user create --domain default --password ${mysql_designate_password} designate
-		openstack role add --project service --user designate admin
+		openstack service show murano > /dev/null 2>&1
+		if [[ $? == 1 ]]; then
+			( openstack service create --name murano --description "Murano Application Catalog" application-catalog
+			openstack user create --domain default --password ${mysql_murano_password} murano
+			openstack role add --project service --user murano admin
 
-		openstack endpoint create --region RegionOne dns public http://${api_address}:9001
-		openstack endpoint create --region RegionOne dns internal http://${api_address}:9001
-		openstack endpoint create --region RegionOne dns admin http://${api_address}:9001 ) > /dev/null 2>&1
+			openstack endpoint create --region RegionOne application-catalog public http://${api_address}:8082/
+			openstack endpoint create --region RegionOne application-catalog internal http://${api_address}:8082/
+			openstack endpoint create --region RegionOne application-catalog admin http://${api_address}:8082/ ) > /dev/null 2>&1
+		fi
 	fi
-
-	print -n "\tManila"
-
-	(openstack service show manila && openstack service show manilav2) > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( openstack service create --name manila --description "OpenStack Shared File Systems" share
-		openstack service create --name manilav2 --description "OpenStack Shared File Systems" sharev2
-		openstack user create --domain default --password ${mysql_manila_password} manila
-		openstack role add --project service --user manila admin
-
-		openstack endpoint create --region RegionOne share public http://${api_address}:8786/v1/%\(tenant_id\)s
-		openstack endpoint create --region RegionOne share internal http://${api_address}:8786/v1/%\(tenant_id\)s
-		openstack endpoint create --region RegionOne share admin http://${api_address}:8786/v1/%\(tenant_id\)s
-
-		openstack endpoint create --region RegionOne sharev2 public http://${api_address}:8786/v2/%\(tenant_id\)s
-		openstack endpoint create --region RegionOne sharev2 internal http://${api_address}:8786/v2/%\(tenant_id\)s
-		openstack endpoint create --region RegionOne sharev2 admin http://${api_address}:8786/v2/%\(tenant_id\)s ) > /dev/null 2>&1
-	fi
-
-	print -n "\tMurano"
-
-	openstack service show murano > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( openstack service create --name murano --description "Murano Application Catalog" application-catalog
-		openstack user create --domain default --password ${mysql_murano_password} murano
-		openstack role add --project service --user murano admin
-
-		openstack endpoint create --region RegionOne application-catalog public http://${api_address}:8082/
-		openstack endpoint create --region RegionOne application-catalog internal http://${api_address}:8082/
-		openstack endpoint create --region RegionOne application-catalog admin http://${api_address}:8082/ ) > /dev/null 2>&1
-	fi
-
-	print -s "DONE"
 }
 
 function install_keystone()

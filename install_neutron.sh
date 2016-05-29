@@ -46,7 +46,7 @@ function install_neutron_api()
 
     __configure_keystone ${neutron_config_file} neutron ${keystone_neutron_password}
 
-    __configure_nova_in_neutron nova ${keystone_neutron_password}
+    __configure_nova_in_neutron nova ${keystone_nova_password}
 
     __configure_oslo_messaging_rabbit ${neutron_config_file}
 
@@ -90,7 +90,7 @@ function install_neutron_compute()
 
     __configure_keystone ${neutron_config_file} neutron ${keystone_neutron_password}
 
-    __configure_nova_in_neutron nova ${keystone_neutron_password}
+    __configure_nova_in_neutron nova ${keystone_nova_password}
 
     __configure_oslo_messaging_rabbit ${neutron_config_file}
 

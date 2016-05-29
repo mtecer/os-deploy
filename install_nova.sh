@@ -73,7 +73,12 @@ function install_nova_compute()
 {
     print "Installing Nova Compute"
 
-    ( rpm -q openstack-nova-compute || yum -y -q install qemu-kvm qemu-kvm-tools openstack-nova-compute sysfsutils openstack-utils ) > /dev/null
+    rpm -q qemu-img-rhev > /dev/null 2>&1
+    if [[ $? == 0 ]]; then
+        ( rpm -e libcacard-devel-rhev libcacard-rhev libcacard-tools-rhev qemu-img-rhev qemu-kvm-common-rhev qemu-kvm-rhev qemu-kvm-rhev-debuginfo qemu-kvm-tools-rhev --nodeps  ) > /dev/null 2>&1
+    fi
+
+    ( rpm -q openstack-nova-compute || yum -y -q install qemu-kvm qemu-kvm-tools openstack-nova-compute sysfsutils openstack-utils ) > /dev/null 2>&1
 
     __configure_keystone ${nova_config_file} nova ${keystone_nova_password}
 

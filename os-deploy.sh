@@ -13,16 +13,18 @@ function print_usage()
 	cat <<-HERE
 
 	Usage:
-	    $(basename "$0") --[compute|controller|allinone]
+	    $(basename "$0") --networking=[L2|L3]|-n
+	    		 --[compute|controller|allinone]
                  --generate-config|-g
                  --print-config|-p
 
 	Commands:
+        -n=*|--networking=*  : Configures OpenStack Networking. L2 or L3
         -g|--generate-config : Generates new configuration file
         -p|--print-config    : Prints running configuration
-        --controller         : Configues OpenStack Controller node
-        --compute            : Configues OpenStack Compute node
-        --allinone           : Configues all-in-one OpenStack IaaS
+        --controller         : Configures OpenStack Controller node
+        --compute            : Configures OpenStack Compute node
+        --allinone           : Configures all-in-one OpenStack IaaS
 
 	HERE
 	exit 1
@@ -34,11 +36,46 @@ fi
 
 ####  Roles and Profiles  #####################################################
 
+function deploy_orchestration_controller_bundle()
+{
+	source ./install_mongodb.sh
+	source ./install_ceilometer.sh
+	source ./install_aodh.sh
+	source ./install_heat.sh
+
+	install_mongodb
+	install_ceilometer_api
+	install_aodh
+	install_heat
+}
+
+function deploy_orchestration_compute_bundle()
+{
+	source ./install_ceilometer.sh
+
+	install_ceilometer_compute
+}
+
+function deploy_designate_bundle()
+{
+	source ./install_designate.sh
+
+	__install_bind
+	install_designate
+}
+
+function deploy_designate_bundle()
+{
+	source ./install_designate.sh
+
+	__install_bind
+	install_designate
+}
+
 function deploy_controller_bundle()
 {
 	source ./install_mariadb.sh
 	source ./install_rabbitmq.sh
-	source ./install_mongodb.sh
 	source ./install_memcache.sh
 	source ./install_keystone.sh
 	source ./install_glance.sh
@@ -49,9 +86,6 @@ function deploy_controller_bundle()
 	source ./install_dashboard.sh
 	source ./install_cinder_storage_lvm.sh
 	source ./install_cinder_api.sh
-	source ./install_ceilometer.sh
-	source ./install_aodh.sh
-	source ./install_heat.sh
 
 	__set_config_variables
 	configure_repos
@@ -60,7 +94,6 @@ function deploy_controller_bundle()
 	configure_limits
 	install_mysql
 	install_rabbitmq
-	install_mongodb
 	install_memcache
 	install_keystone
 	configure_endpoints
@@ -70,9 +103,7 @@ function deploy_controller_bundle()
 	install_dashboard
 	install_cinder_api
 	configure_cinder_storage
-	install_ceilometer_api
-	install_aodh
-	install_heat
+	__finish_installation
 }
 
 function deploy_compute_bundle()
@@ -81,7 +112,6 @@ function deploy_compute_bundle()
 	source ./install_l2_networking.sh
 	source ./install_l3_networking.sh
 	source ./install_neutron.sh
-	source ./install_ceilometer.sh
 
 	__set_config_variables
 	configure_repos
@@ -90,14 +120,13 @@ function deploy_compute_bundle()
 	configure_limits
 	install_nova_compute
 	install_neutron_compute ${networking}
-	install_ceilometer_compute
+	__finish_installation
 }
 
 function deploy_allinone_bundle()
 {
 	source ./install_mariadb.sh
 	source ./install_rabbitmq.sh
-	source ./install_mongodb.sh
 	source ./install_memcache.sh
 	source ./install_keystone.sh
 	source ./install_glance.sh
@@ -108,13 +137,9 @@ function deploy_allinone_bundle()
 	source ./install_dashboard.sh
 	source ./install_cinder_storage_lvm.sh
 	source ./install_cinder_api.sh
-	source ./install_ceilometer.sh
-	source ./install_aodh.sh
-	source ./install_heat.sh
-	source ./install_designate.sh
-	source ./install_manila_storage_nfs.sh
-	source ./install_manila_api.sh
-	source ./install_murano.sh
+	# source ./install_manila_storage_nfs.sh
+	# source ./install_manila_api.sh
+	# source ./install_murano.sh
 
 	__set_config_variables
 	configure_repos
@@ -123,32 +148,36 @@ function deploy_allinone_bundle()
 	configure_limits
 	install_mysql
 	install_rabbitmq
-	install_mongodb
 	install_memcache
 	install_keystone
 	configure_endpoints
 	install_glance
 	install_nova_api
 	install_nova_compute
-	install_neutron_api ${networking}
 	install_neutron_compute ${networking}
+	install_neutron_api ${networking}
 	install_dashboard
 	install_cinder_api
 	configure_cinder_storage
-	install_ceilometer_api
-	install_ceilometer_compute
-	install_aodh
-	install_heat
+	__finish_installation
 }
 
 ####  main()  #################################################################
 
 ROLE=""
 NETWORKING=""
+ORCHESTRATION=false
+DESIGNATE=false
+MANILA=false
+MURANO=false
 
 for i in "$@"
 do
 case $i in
+	-n=*|--networking=*)
+		NETWORKING="${i#*=}"
+		shift
+		;;
 	-g|--generate-config)
 		__generate_config_file
 		shift
@@ -157,10 +186,26 @@ case $i in
 		__print_config
 		shift
 		;;
-	-n=*|--networking=*)
-    	NETWORKING="${i#*=}"
-    	shift
-    	;;
+	--add-orchestration)
+		ORCHESTRATION=true
+		shift
+		;;
+	--add-designate)
+		DESIGNATE=true
+		shift
+		;;
+	--add-manila)
+		MANILA=true
+		shift
+		;;
+	--add-murano)
+		MURANO=true
+		shift
+		;;
+	--add-designate)
+		DESIGNATE=true
+		shift
+		;;
 	--controller)
 		__verify_role ${i:2}
 		deploy_controller_bundle
@@ -181,5 +226,3 @@ case $i in
 	;;
 esac
 done
-
-echo ${NETWORKING}

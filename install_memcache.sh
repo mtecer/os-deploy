@@ -4,9 +4,9 @@ function install_memcache()
 
     ( rpm -q memcached || yum -y -q install memcached python-memcached ) > /dev/null
 
-    egrep 'OPTIONS="-l 127.0.0.1"' /etc/sysconfig/memcached > /dev/null 2>&1
+    egrep 'OPTIONS="-l 0.0.0.0"' /etc/sysconfig/memcached > /dev/null 2>&1
     if [[ $? == 1 ]]; then
-        sed -i 's/OPTIONS=""/OPTIONS="-l 127.0.0.1"/g' /etc/sysconfig/memcached
+        sed -i 's/OPTIONS=""/OPTIONS="-l 0.0.0.0"/g' /etc/sysconfig/memcached
     fi
 
     __enable_service memcached

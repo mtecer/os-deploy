@@ -7,6 +7,9 @@ function install_dashboard()
 	sed -i 's/^WSGIScriptAlias \/dashboard/WSGIScriptAlias \//' /etc/httpd/conf.d/openstack-dashboard.conf
 	sed -i 's/^Alias \/dashboard\/static/Alias \/static/' /etc/httpd/conf.d/openstack-dashboard.conf
 
+	touch /usr/share/openstack-dashboard/openstack_dashboard/local/local_settings.d/_99_override_all_configuration.py
+	_md5sum_original=$(md5sum /usr/share/openstack-dashboard/openstack_dashboard/local/local_settings.d/_99_override_all_configuration.py)
+
 	cat <<-HERE > /usr/share/openstack-dashboard/openstack_dashboard/local/local_settings.d/_99_override_all_configuration.py
 	WEBROOT = '/'
 
@@ -65,16 +68,17 @@ function install_dashboard()
 	TIME_ZONE = "UTC"
 	HERE
 
+	_md5sum_updated=$(md5sum /usr/share/openstack-dashboard/openstack_dashboard/local/local_settings.d/_99_override_all_configuration.py)
+
 	chown -R apache.apache /usr/share/openstack-dashboard/static
 
 	__enable_service httpd
 	__enable_service memcached
 
-	# __start_service httpd
-	# __start_service memcached
-
-	__restart_service httpd
-	__restart_service memcached
+	if [[ ${_md5sum_original} != ${_md5sum_updated} ]]; then
+		__restart_service httpd
+		__restart_service memcached
+	fi
 
 	print -s "DONE"
 }

@@ -13,7 +13,7 @@ function configure_cinder_storage()
 
 		pvcreate /dev/${cinder_iscsi_partition}1
 
-		vgcreate cinder-volumes /dev/${cinder_iscsi_partition}1 ) > /dev/null
+		vgcreate cinder-volumes /dev/${cinder_iscsi_partition}1 ) > /dev/null 2>&1
 	fi
 
 	__enable_service lvm2-lvmetad
