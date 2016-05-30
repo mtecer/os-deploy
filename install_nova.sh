@@ -33,11 +33,11 @@ function install_nova_api()
     openstack-config --set ${nova_config_file} DEFAULT rpc_backend rabbit
     openstack-config --set ${nova_config_file} DEFAULT dhcp_domain ${dhcp_domain_name}
 
-    openstack-config --set ${nova_config_file} api_database connection "mysql+pymysql://nova:${mysql_nova_password}@127.0.0.1/nova_api"
+    openstack-config --set ${nova_config_file} api_database connection "mysql+pymysql://nova:${mysql_nova_password}@${api_address}/nova_api"
 
     openstack-config --set ${nova_config_file} cinder os_region_name RegionOne
 
-    openstack-config --set ${nova_config_file} database connection "mysql+pymysql://nova:${mysql_nova_password}@127.0.0.1/nova"
+    openstack-config --set ${nova_config_file} database connection "mysql+pymysql://nova:${mysql_nova_password}@${api_address}/nova"
 
     openstack-config --set ${nova_config_file} glance api_servers http://${api_address}:9292
 
@@ -53,14 +53,12 @@ function install_nova_api()
     ( su -s /bin/sh -c "nova-manage db sync" nova ) > /dev/null 2>&1
 
     __enable_service openstack-nova-api
-    __enable_service openstack-nova-cert
     __enable_service openstack-nova-consoleauth
     __enable_service openstack-nova-scheduler
     __enable_service openstack-nova-conductor
     __enable_service openstack-nova-novncproxy
 
     __start_service openstack-nova-api
-    __start_service openstack-nova-cert
     __start_service openstack-nova-consoleauth
     __start_service openstack-nova-scheduler
     __start_service openstack-nova-conductor
@@ -72,6 +70,10 @@ function install_nova_api()
 function install_nova_compute()
 {
     print "Installing Nova Compute"
+
+    __aggregate=$(hostname -s)
+
+    __generate_openrc
 
     rpm -q qemu-img-rhev > /dev/null 2>&1
     if [[ $? == 0 ]]; then
@@ -106,6 +108,14 @@ function install_nova_compute()
 
     __start_service libvirtd
     __start_service openstack-nova-compute
+
+    sleep 5
+
+    ( openstack aggregate show ${__aggregate} ) > /dev/null 2>&1
+    if [[ $? != 0 ]]; then
+        ( openstack aggregate create ${__aggregate} --zone ${__aggregate}
+         openstack aggregate add host ${__aggregate} $(hostname) ) > /dev/null 2>&1
+    fi
 
     print -s "DONE"
 }
