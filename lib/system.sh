@@ -83,10 +83,12 @@ function __generate_config_file()
 		NETWORKING=${NETWORKING}
 
 		VXLAN_NETWORK="10.199.52.0"
+		VLAN_NETWORK="10.199.54.0"
 
-		API_ADDRESS=$(hostname --ip-address)
-		MY_IP=$(hostname --ip-address)
-		HOSTNAME=$(hostname)
+		API_ADDRESS='10.199.51.10'
+		# API_ADDRESS=$(hostname --ip-address)
+		# MY_IP=$(hostname --ip-address)
+		# HOSTNAME=$(hostname)
 
 		ADMIN_TOKEN=$(openssl rand -hex 20)
 		METERING_SECRET=$(openssl rand -hex 10)
@@ -122,7 +124,6 @@ function __generate_config_file()
 		KEYSTONE_NEUTRON_PASSWORD=$(__generate_password)
 		KEYSTONE_NOVA_PASSWORD=$(__generate_password)
 
-		RABBITMQ_HOST=$(hostname --ip-address)
 		RABBITMQ_USERID="openstack"
 		RABBITMQ_PASSWORD=$(__generate_password)
 
@@ -164,11 +165,15 @@ function __set_config_variables()
 
 		networking=${NETWORKING}
 
-		vxlan_network=${VXLAN_NETWORK:-127.0.0}
+		vxlan_network=${VXLAN_NETWORK:-127.0.0.1}
+		vlan_network=${VLAN_NETWORK:-127.0.0.1}
 
+		# api_address=${API_ADDRESS:-127.0.0.1}
+		# my_ip=${MY_IP:-127.0.0.1}
+		# hostname=${HOSTNAME:-localhost}
 		api_address=${API_ADDRESS:-127.0.0.1}
-		my_ip=${MY_IP:-127.0.0.1}
-		hostname=${HOSTNAME:-localhost}
+		my_ip=$(hostname --ip-address)
+		hostname=$(hostname)
 
 		admin_token=${ADMIN_TOKEN:-UNDEFINED}
 		metering_secret=${METERING_SECRET:-UNDEFINED}
@@ -204,7 +209,7 @@ function __set_config_variables()
 		keystone_neutron_password=${KEYSTONE_NEUTRON_PASSWORD:-password}
 		keystone_nova_password=${KEYSTONE_NOVA_PASSWORD:-password}
 
-		rabbitmq_host=${RABBITMQ_HOST:-127.0.0.1}
+		rabbitmq_host=${api_address}
 		rabbitmq_userid=${RABBITMQ_USERID:-openstack}
 		rabbitmq_password=${RABBITMQ_PASSWORD:-password}
 
@@ -244,6 +249,7 @@ function __print_config()
 	NETWORKING      = "${networking}"
 
 	VXLAN_NETWORK   = "${vxlan_network}"
+	VLAN_NETWORK    = "${vlan_network}"
 
 	API_ADDRESS     = "${api_address}"
 	MY_IP           = "${my_ip}"
@@ -343,6 +349,8 @@ function configure_limits()
 
 function configure_repos()
 {
+    print "Configuring yum repos"
+
 	yum clean all > /dev/null 2>&1
 
 	egrep 'ip_resolve|proxy' /etc/yum.conf > /dev/null 2>&1
@@ -367,11 +375,17 @@ function configure_repos()
 		( yum -y -q install http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm ) > /dev/null
 	fi
 
+    print -s "DONE"
+
+    print "Installing OpenStack Client"
+
 	( rpm -q yum-plugin-priorities || yum -y -q install yum-plugin-priorities ) > /dev/null
 
 	( rpm -q python-openstackclient || yum -y -q install python-openstackclient ) > /dev/null
 
 	( rpm -q openstack-utils || yum -y -q install openstack-utils ) > /dev/null
+
+    print -s "DONE"
 }
 
 function configure_date()

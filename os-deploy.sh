@@ -13,18 +13,18 @@ function print_usage()
 	cat <<-HERE
 
 	Usage:
-	    $(basename "$0") --networking=[L2|L3]|-n
-	    		 --[compute|controller|allinone]
-                 --generate-config|-g
-                 --print-config|-p
+		$(basename "$0") --networking=[L2|L3]|-n
+				 --[compute|controller|allinone]
+				 --generate-config|-g
+				 --print-config|-p
 
 	Commands:
-        -n=*|--networking=*  : Configures OpenStack Networking. L2 or L3
-        -g|--generate-config : Generates new configuration file
-        -p|--print-config    : Prints running configuration
-        --controller         : Configures OpenStack Controller node
-        --compute            : Configures OpenStack Compute node
-        --allinone           : Configures all-in-one OpenStack IaaS
+		-n=*|--networking=*  : Configures OpenStack Networking. L2 or L3
+		-g|--generate-config : Generates new configuration file
+		-p|--print-config    : Prints running configuration
+		--controller         : Configures OpenStack Controller node
+		--compute            : Configures OpenStack Compute node
+		--allinone           : Configures all-in-one OpenStack IaaS
 
 	HERE
 	exit 1
@@ -84,8 +84,9 @@ function deploy_controller_bundle()
 	source ./install_l3_networking.sh
 	source ./install_neutron.sh
 	source ./install_dashboard.sh
-	source ./install_cinder_storage_lvm.sh
+	source ./install_cinder.sh
 	source ./install_cinder_api.sh
+	source ./install_cinder_storage_lvm.sh
 
 	__set_config_variables
 	configure_repos
@@ -101,7 +102,8 @@ function deploy_controller_bundle()
 	install_nova_api
 	install_neutron_api ${networking}
 	install_dashboard
-	install_cinder_api
+	install_cinder
+	configure_cinder_api
 	configure_cinder_storage
 	__finish_installation
 }
@@ -112,6 +114,8 @@ function deploy_compute_bundle()
 	source ./install_l2_networking.sh
 	source ./install_l3_networking.sh
 	source ./install_neutron.sh
+	source ./install_cinder.sh
+	source ./install_cinder_storage_lvm.sh
 
 	__set_config_variables
 	configure_repos
@@ -120,7 +124,9 @@ function deploy_compute_bundle()
 	configure_limits
 	install_nova_compute
 	install_neutron_compute ${networking}
-	__finish_installation
+	install_cinder
+	configure_cinder_storage
+	__cleanup_systemd_permissions
 }
 
 function deploy_allinone_bundle()
@@ -135,8 +141,9 @@ function deploy_allinone_bundle()
 	source ./install_l3_networking.sh
 	source ./install_neutron.sh
 	source ./install_dashboard.sh
-	source ./install_cinder_storage_lvm.sh
+	source ./install_cinder.sh
 	source ./install_cinder_api.sh
+	source ./install_cinder_storage_lvm.sh
 	# source ./install_manila_storage_nfs.sh
 	# source ./install_manila_api.sh
 	# source ./install_murano.sh
@@ -157,7 +164,8 @@ function deploy_allinone_bundle()
 	install_neutron_compute ${networking}
 	install_neutron_api ${networking}
 	install_dashboard
-	install_cinder_api
+	install_cinder
+	configure_cinder_api
 	configure_cinder_storage
 	__finish_installation
 }
