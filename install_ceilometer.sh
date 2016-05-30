@@ -13,7 +13,7 @@ function install_ceilometer_api()
 	openstack-config --set ${ceilometer_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${ceilometer_config_file} DEFAULT rpc_backend rabbit
 
-	openstack-config --set ${ceilometer_config_file} database connection mongodb://ceilometer:${mysql_ceilometer_password}@127.0.0.1:27017/ceilometer
+	openstack-config --set ${ceilometer_config_file} database connection mongodb://ceilometer:${mysql_ceilometer_password}@${api_address}:27017/ceilometer
 
 	openstack-config --set ${ceilometer_config_file} publisher telemetry_secret $metering_secret
 

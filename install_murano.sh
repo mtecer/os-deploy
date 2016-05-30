@@ -28,7 +28,7 @@ function install_murano()
     openstack-config --set ${murano_config_file} DEFAULT debug False
     openstack-config --set ${murano_config_file} DEFAULT rpc_backend rabbit
 
-    openstack-config --set ${murano_config_file} database connection mysql+pymysql://murano:${mysql_murano_password}@127.0.0.1/murano
+    openstack-config --set ${murano_config_file} database connection mysql+pymysql://murano:${mysql_murano_password}@${api_address}/murano
 
     openstack-config --set ${murano_config_file} murano url http://${api_address}:8082
 

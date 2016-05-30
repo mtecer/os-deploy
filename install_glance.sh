@@ -10,13 +10,13 @@ function install_glance()
 	openstack-config --set ${glance_api_config_file} DEFAULT verbose False
 	openstack-config --set ${glance_api_config_file} DEFAULT show_image_direct_url True
 
-	openstack-config --set ${glance_api_config_file} database connection mysql+pymysql://glance:${mysql_glance_password}@127.0.0.1/glance
+	openstack-config --set ${glance_api_config_file} database connection mysql+pymysql://glance:${mysql_glance_password}@${api_address}/glance
 
 	openstack-config --set ${glance_api_config_file} paste_deploy flavor keystone
 
 	openstack-config --set ${glance_registry_config_file} DEFAULT verbose False
 
-	openstack-config --set ${glance_registry_config_file} database connection mysql+pymysql://glance:${mysql_glance_password}@127.0.0.1/glance
+	openstack-config --set ${glance_registry_config_file} database connection mysql+pymysql://glance:${mysql_glance_password}@${api_address}/glance
 
 	openstack-config --set ${glance_registry_config_file} paste_deploy flavor keystone
 
@@ -30,8 +30,6 @@ function install_glance()
 
 	__start_service openstack-glance-api
 	__start_service openstack-glance-registry
-
-	( echo "export OS_IMAGE_API_VERSION=2" | tee -a /root/admin-openrc.sh ) > /dev/null
 
 	print -s "DONE"
 }

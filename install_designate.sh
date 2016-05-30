@@ -189,10 +189,10 @@ function install_designate()
 	openstack-config --set ${designate_config_file} DEFAULT verbose False
 	openstack-config --set ${designate_config_file} DEFAULT debug False
 
-	openstack-config --set ${designate_config_file} storage:sqlalchemy connection mysql+pymysql://designate:${mysql_designate_password}@127.0.0.1/designate
+	openstack-config --set ${designate_config_file} storage:sqlalchemy connection mysql+pymysql://designate:${mysql_designate_password}@${api_address}/designate
 	openstack-config --set ${designate_config_file} storage:sqlalchemy max_retries -1
 
-	openstack-config --set ${designate_config_file} pool_manager_cache:sqlalchemy connection mysql+pymysql://designate:${mysql_designate_password}@127.0.0.1/designate_pool_manager
+	openstack-config --set ${designate_config_file} pool_manager_cache:sqlalchemy connection mysql+pymysql://designate:${mysql_designate_password}@${api_address}/designate_pool_manager
 	openstack-config --set ${designate_config_file} pool_manager_cache:sqlalchemy max_retries -1
 
 	openstack-config --set ${designate_config_file} oslo_messaging_notifications driver messagingv2

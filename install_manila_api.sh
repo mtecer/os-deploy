@@ -18,7 +18,7 @@ function install_manila_api()
 
     openstack-config --set ${manila_config_file} DEFAULT default_log_levels amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=INFO,oslo.messaging=INFO,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=INFO,dogpile.core.dogpile=INFO,manila.context=ERROR
 
-    openstack-config --set ${manila_config_file} database connection mysql+pymysql://manila:${mysql_manila_password}@127.0.0.1/manila
+    openstack-config --set ${manila_config_file} database connection mysql+pymysql://manila:${mysql_manila_password}@${api_address}/manila
 
     openstack-config --set ${manila_config_file} oslo_concurrency lock_path /var/lib/manila/tmp
 

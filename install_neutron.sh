@@ -57,7 +57,7 @@ function install_neutron_api()
     openstack-config --set ${neutron_config_file} DEFAULT rpc_backend rabbit
     openstack-config --set ${neutron_config_file} DEFAULT service_plugins router
 
-    openstack-config --set ${neutron_config_file} database connection "mysql+pymysql://neutron:${mysql_neutron_password}@127.0.0.1/neutron"
+    openstack-config --set ${neutron_config_file} database connection "mysql+pymysql://neutron:${mysql_neutron_password}@${api_address}/neutron"
 
     openstack-config --set ${neutron_config_file} oslo_concurrency lock_path /var/lib/neutron/lock
 
@@ -101,7 +101,7 @@ function install_neutron_compute()
     openstack-config --set ${neutron_config_file} DEFAULT rpc_backend rabbit
     openstack-config --set ${neutron_config_file} DEFAULT service_plugins router
 
-    openstack-config --set ${neutron_config_file} database connection "mysql+pymysql://neutron:${mysql_neutron_password}@127.0.0.1/neutron"
+    openstack-config --set ${neutron_config_file} database connection "mysql+pymysql://neutron:${mysql_neutron_password}@${api_address}/neutron"
 
     openstack-config --set ${neutron_config_file} oslo_concurrency lock_path /var/lib/neutron/lock
 
