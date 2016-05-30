@@ -52,11 +52,11 @@ function install_mysql()
 	CREATE DATABASE neutron;
 	GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY "${mysql_neutron_password}";
 
+	CREATE DATABASE cinder;
+	GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY "${mysql_cinder_password}";
+
 	FLUSH PRIVILEGES;
 	HERE
-
-	# CREATE DATABASE cinder;
-	# GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY "${mysql_cinder_password}";
 
 	# CREATE DATABASE aodh;
 	# GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY "${mysql_aodh_password}";
