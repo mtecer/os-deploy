@@ -52,29 +52,29 @@ function install_mysql()
 	CREATE DATABASE neutron;
 	GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY "${mysql_neutron_password}";
 
-	CREATE DATABASE cinder;
-	GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY "${mysql_cinder_password}";
-
-	CREATE DATABASE aodh;
-	GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY "${mysql_aodh_password}";
-
-	CREATE DATABASE heat;
-	GRANT ALL PRIVILEGES ON heat.* TO 'heat'@'%' IDENTIFIED BY "${mysql_heat_password}";
-
-	CREATE DATABASE designate;
-	CREATE DATABASE designate_pool_manager;
-
-	GRANT ALL ON designate.* TO 'designate'@'%' IDENTIFIED BY "${mysql_designate_password}";
-	GRANT ALL ON designate_pool_manager.* TO 'designate'@'%' IDENTIFIED BY "${mysql_designate_password}";
-
-	CREATE DATABASE manila;
-	GRANT ALL PRIVILEGES ON manila.* TO 'manila'@'%' IDENTIFIED BY "${mysql_manila_password}";
-
-	CREATE DATABASE murano;
-	GRANT ALL PRIVILEGES ON murano.* TO 'murano'@'%' IDENTIFIED BY "${mysql_murano_password}";
-
 	FLUSH PRIVILEGES;
 	HERE
+
+	# CREATE DATABASE cinder;
+	# GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY "${mysql_cinder_password}";
+
+	# CREATE DATABASE aodh;
+	# GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY "${mysql_aodh_password}";
+
+	# CREATE DATABASE heat;
+	# GRANT ALL PRIVILEGES ON heat.* TO 'heat'@'%' IDENTIFIED BY "${mysql_heat_password}";
+
+	# CREATE DATABASE designate;
+	# CREATE DATABASE designate_pool_manager;
+
+	# GRANT ALL ON designate.* TO 'designate'@'%' IDENTIFIED BY "${mysql_designate_password}";
+	# GRANT ALL ON designate_pool_manager.* TO 'designate'@'%' IDENTIFIED BY "${mysql_designate_password}";
+
+	# CREATE DATABASE manila;
+	# GRANT ALL PRIVILEGES ON manila.* TO 'manila'@'%' IDENTIFIED BY "${mysql_manila_password}";
+
+	# CREATE DATABASE murano;
+	# GRANT ALL PRIVILEGES ON murano.* TO 'murano'@'%' IDENTIFIED BY "${mysql_murano_password}";
 
 	print -s "DONE"
 }
