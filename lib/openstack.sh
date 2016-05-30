@@ -1,3 +1,18 @@
+function __generate_openrc()
+{
+	echo "export OS_PROJECT_DOMAIN_NAME=default"                >  /root/admin-openrc.sh
+	echo "export OS_USER_DOMAIN_NAME=default"                   >> /root/admin-openrc.sh
+	echo "export OS_PROJECT_NAME=admin"                         >> /root/admin-openrc.sh
+	echo "export OS_USERNAME=admin"                             >> /root/admin-openrc.sh
+	echo "export OS_PASSWORD=${keystone_admin_password}"        >> /root/admin-openrc.sh
+	echo "export OS_AUTH_URL=http://${api_address}:35357/v3"    >> /root/admin-openrc.sh
+	echo "export OS_IDENTITY_API_VERSION=3"                     >> /root/admin-openrc.sh
+	echo "export OS_VOLUME_API_VERSION=2"                       >> /root/admin-openrc.sh
+	echo "export OS_IMAGE_API_VERSION=2"						>> /root/admin-openrc.sh
+
+	source /root/admin-openrc.sh
+}
+
 function __configure_keystone()
 {
 	( openstack-config --set ${1} keystone_authtoken auth_uri http://${api_address}:5000
@@ -142,34 +157,63 @@ function __openstack_networks()
 
 	ADMIN_TENANT_ID=$(openstack project show admin -f value -c id)
 
-	openstack network show ext-net > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		neutron net-create ext-net --router:external --provider:physical_network external --provider:network_type flat  > /dev/null 2>&1
-	fi
-
-	openstack subnet show ext-subnet > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( neutron subnet-create ext-net 10.199.53.0/24 \
-		    --allocation-pool start=10.199.53.101,end=10.199.53.200 \
-		    --gateway 10.199.53.2 --disable-dhcp --name ext-subnet ) > /dev/null 2>&1
-	fi
-
 	openstack network show admin-net > /dev/null 2>&1
 	if [[ $? == 1 ]]; then
-		neutron net-create admin-net --tenant-id ${ADMIN_TENANT_ID} --provider:network_type vxlan  > /dev/null 2>&1
+		neutron net-create admin-net --provider:physical_network provider --provider:network_type flat  > /dev/null 2>&1
 	fi
 
 	openstack subnet show admin-subnet > /dev/null 2>&1
 	if [[ $? == 1 ]]; then
-		neutron subnet-create admin-net --name admin-subnet --gateway 192.168.1.1 192.168.1.0/24 > /dev/null 2>&1
+		( neutron subnet-create admin-net 10.199.54.0/24 \
+		    --allocation-pool start=10.199.54.11,end=10.199.54.240 \
+		    --gateway 10.199.54.2 --name admin-subnet ) > /dev/null 2>&1
 	fi
 
-	openstack router show admin-router > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( neutron router-create admin-router
-		neutron router-interface-add admin-router admin-subnet
-		neutron router-gateway-set admin-router ext-net ) > /dev/null 2>&1
-	fi
+	# openstack network show admin-net > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	neutron net-create admin-net --tenant-id ${ADMIN_TENANT_ID} --provider:network_type vxlan  > /dev/null 2>&1
+	# fi
+
+	# openstack subnet show admin-subnet > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	neutron subnet-create admin-net --name admin-subnet --gateway 192.168.1.1 192.168.1.0/24 > /dev/null 2>&1
+	# fi
+
+	# openstack router show admin-router > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	( neutron router-create admin-router
+	# 	neutron router-interface-add admin-router admin-subnet
+	# 	neutron router-gateway-set admin-router ext-net ) > /dev/null 2>&1
+	# fi
+
+	# openstack network show ext-net > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	neutron net-create ext-net --router:external --provider:physical_network external --provider:network_type flat  > /dev/null 2>&1
+	# fi
+
+	# openstack subnet show ext-subnet > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	( neutron subnet-create ext-net 10.199.53.0/24 \
+	# 	    --allocation-pool start=10.199.53.101,end=10.199.53.200 \
+	# 	    --gateway 10.199.53.2 --disable-dhcp --name ext-subnet ) > /dev/null 2>&1
+	# fi
+
+	# openstack network show admin-net > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	neutron net-create admin-net --tenant-id ${ADMIN_TENANT_ID} --provider:network_type vxlan  > /dev/null 2>&1
+	# fi
+
+	# openstack subnet show admin-subnet > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	neutron subnet-create admin-net --name admin-subnet --gateway 192.168.1.1 192.168.1.0/24 > /dev/null 2>&1
+	# fi
+
+	# openstack router show admin-router > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	( neutron router-create admin-router
+	# 	neutron router-interface-add admin-router admin-subnet
+	# 	neutron router-gateway-set admin-router ext-net ) > /dev/null 2>&1
+	# fi
 }
 
 function __openstack_instance()
