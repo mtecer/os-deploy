@@ -4,7 +4,7 @@ function configure_endpoints()
 
 	unset ADMIN_TOKEN
 	export OS_TOKEN=${admin_token}
-	export OS_URL=http://127.0.0.1:35357/v3
+	export OS_URL=http://${api_address}:35357/v3
 	export OS_IDENTITY_API_VERSION=3
 
 	print -n "\tKeystone"
@@ -33,15 +33,7 @@ function configure_endpoints()
 	# OR vim /usr/share/keystone/keystone-dist-paste.ini
 	# remove admin_token_auth from [pipeline:public_api],[pipeline:admin_api],[pipeline:api_v3]
 
-	echo "export OS_PROJECT_DOMAIN_NAME=default"                >  /root/admin-openrc.sh
-	echo "export OS_USER_DOMAIN_NAME=default"                   >> /root/admin-openrc.sh
-	echo "export OS_PROJECT_NAME=admin"                         >> /root/admin-openrc.sh
-	echo "export OS_USERNAME=admin"                             >> /root/admin-openrc.sh
-	echo "export OS_PASSWORD=${keystone_admin_password}"        >> /root/admin-openrc.sh
-	echo "export OS_AUTH_URL=http://${api_address}:35357/v3"    >> /root/admin-openrc.sh
-	echo "export OS_IDENTITY_API_VERSION=3"                     >> /root/admin-openrc.sh
-
-	source /root/admin-openrc.sh
+	__generate_openrc
 
 	print -n "\tGlance"
 
@@ -217,7 +209,7 @@ function install_keystone()
 	openstack-config --set ${keystone_config_file} DEFAULT log_dir /var/log/keystone
 	# openstack-config --set ${keystone_config_file} DEFAULT verbose False
 
-	openstack-config --set ${keystone_config_file} database connection mysql+pymysql://keystone:${mysql_keystone_password}@127.0.0.1/keystone
+	openstack-config --set ${keystone_config_file} database connection mysql+pymysql://keystone:${mysql_keystone_password}@${api_address}/keystone
 
 	openstack-config --set ${keystone_config_file} token provider fernet
 	openstack-config --set ${keystone_config_file} token expiration 14400
