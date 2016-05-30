@@ -81,17 +81,14 @@ function deploy_l3_vlan_infrastructure_compute()
     __start_service openvswitch
 
     __add_ovs_bridge_port br-tun ${vxlan_nic}
-    # __add_ovs_bridge_port br-ex ${ext_nic}
     __add_ovs_bridge_port br-vlan ${vlan_nic}
 
     __enable_service neutron-openvswitch-agent
     __start_service neutron-openvswitch-agent
 
-    # __enable_service neutron-l3-agent
     __enable_service neutron-metadata-agent
     __enable_service neutron-netns-cleanup
     __enable_service neutron-ovs-cleanup
 
-    # __start_service neutron-l3-agent
     __start_service neutron-metadata-agent
 }
