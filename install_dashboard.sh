@@ -20,16 +20,16 @@ function install_dashboard()
 		"compute": 2,
 	}
 
-	ALLOWED_HOSTS = ['10.199.51.11', ]
+	ALLOWED_HOSTS = ['*', ]
 
-	OPENSTACK_HOST = "127.0.0.1"
+	OPENSTACK_HOST = "${api_address}"
 	OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
 
 	SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 	CACHES = {
 		'default': {
 			'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-			'LOCATION': '127.0.0.1:11211',
+			'LOCATION': "${api_address}",
 		}
 	}
 
