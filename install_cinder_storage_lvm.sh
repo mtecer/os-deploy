@@ -12,12 +12,18 @@ function configure_cinder_storage()
 	if [[ $? == 1 ]]; then
 		sed -i '/devices {/ a\\tfilter = [ "a/sda/", "a/sdb/", "r/.*/" ]' /etc/lvm/lvm.conf
 
-		( parted /dev/${cinder_iscsi_partition} mklabel gpt
-		parted -s -a optimal /dev/${cinder_iscsi_partition} mkpart primary 0% 100%
-
-		pvcreate /dev/${cinder_iscsi_partition}1
-
-		vgcreate cinder-volumes /dev/${cinder_iscsi_partition}1 ) > /dev/null 2>&1
+		( vgdisplay cinder-volumes ) > /dev/null 2>&1
+		if [[ $? != 0 ]]; then
+			if [[ -b ${cinder_iscsi_partition} ]]; then
+				pvcreate ${cinder_iscsi_partition}
+				vgcreate cinder-volumes ${cinder_iscsi_partition} ) > /dev/null 2>&1
+			else
+				( parted -s ${cinder_iscsi_drive} mklabel gpt
+				parted -s -a optimal ${cinder_iscsi_drive} mkpart primary 0% 100%
+				pvcreate ${cinder_iscsi_partition}
+				vgcreate cinder-volumes ${cinder_iscsi_partition} ) > /dev/null 2>&1
+			fi
+		fi
 	fi
 
 	__enable_service lvm2-lvmetad

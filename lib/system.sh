@@ -94,8 +94,10 @@ function __generate_config_file()
 		METERING_SECRET=$(openssl rand -hex 10)
 		METADATA_PROXY_SHARED_SECRET=$(openssl rand -hex 25)
 
-		CINDER_ISCSI_PARTITION='sdb'
-		MANILA_ISCSI_PARTITION='sdc'
+		CINDER_ISCSI_DRIVE='/dev/sdb'
+		CINDER_ISCSI_PARTITION='/dev/sdb1'
+		MANILA_ISCSI_DRIVE='/dev/sdc'
+		MANILA_ISCSI_PARTITION='/dev/sdc1'
 
 		MYSQL_AODH_PASSWORD=$(__generate_password)
 		MYSQL_CINDER_PASSWORD=$(__generate_password)
@@ -179,7 +181,9 @@ function __set_config_variables()
 		metering_secret=${METERING_SECRET:-UNDEFINED}
 		metadata_proxy_shared_secret=${METADATA_PROXY_SHARED_SECRET:-JsbKCjKpysqW8WyBnvh2hmEnDCCa3c4v3WfKejBMLhdcDfVZbt}
 
+		cinder_iscsi_drive=${CINDER_ISCSI_DRIVE:-/dev/sdb}
 		cinder_iscsi_partition=${CINDER_ISCSI_PARTITION:-/dev/sdb1}
+		manila_iscsi_drive=${MANILA_ISCSI_DRIVE:-/dev/sdc}
 		manila_iscsi_partition=${MANILA_ISCSI_PARTITION:-/dev/sdc1}
 
 		mysql_aodh_password=${MYSQL_AODH_PASSWORD:-password}
@@ -259,7 +263,9 @@ function __print_config()
 	METERING_SECRET                 = "${metering_secret}"
 	METADATA_PROXY_SHARED_SECRET    = "${metadata_proxy_shared_secret}"
 
+	CINDER_ISCSI_DRIVE              = "${cinder_iscsi_drive}"
 	CINDER_ISCSI_PARTITION          = "${cinder_iscsi_partition}"
+	MANILA_ISCSI_DRIVE              = "${manila_iscsi_drive}"
 	MANILA_ISCSI_PARTITION          = "${manila_iscsi_partition}"
 
 	MYSQL_AODH_PASSWORD             = "${mysql_aodh_password}"
