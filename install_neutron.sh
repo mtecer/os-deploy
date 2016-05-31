@@ -109,10 +109,6 @@ function install_neutron_compute()
     chown neutron.neutron /var/lib/neutron/lock
     chmod 700 /var/lib/neutron/lock ) > /dev/null 2>&1
 
-    if [[ ! -e /etc/neutron/plugin.ini ]]; then
-        ( ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini ) > /dev/null 2>&1
-    fi
-
     if [[ ${1} == "L3" ]]; then
         deploy_l3_vlan_infrastructure_compute
     elif [[ ${1} == "L2" ]]; then
