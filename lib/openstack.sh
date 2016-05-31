@@ -157,17 +157,17 @@ function __openstack_networks()
 
 	ADMIN_TENANT_ID=$(openstack project show admin -f value -c id)
 
-	openstack network show admin-net > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		neutron net-create admin-net --provider:physical_network provider --provider:network_type flat  > /dev/null 2>&1
-	fi
+	# openstack network show admin-net > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	neutron net-create admin-net --provider:physical_network provider --provider:network_type flat  > /dev/null 2>&1
+	# fi
 
-	openstack subnet show admin-subnet > /dev/null 2>&1
-	if [[ $? == 1 ]]; then
-		( neutron subnet-create admin-net 10.199.54.0/24 \
-		    --allocation-pool start=10.199.54.11,end=10.199.54.240 \
-		    --gateway 10.199.54.2 --name admin-subnet ) > /dev/null 2>&1
-	fi
+	# openstack subnet show admin-subnet > /dev/null 2>&1
+	# if [[ $? == 1 ]]; then
+	# 	( neutron subnet-create admin-net 10.199.54.0/24 \
+	# 	    --allocation-pool start=10.199.54.11,end=10.199.54.240 \
+	# 	    --gateway 10.199.54.2 --name admin-subnet ) > /dev/null 2>&1
+	# fi
 
 	# openstack network show admin-net > /dev/null 2>&1
 	# if [[ $? == 1 ]]; then
