@@ -33,6 +33,7 @@ function deploy_l3_vlan_infrastructure_network()
 
     openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
     openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata True
+    openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT dhcp_lease_duration 120
 
     openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_ip ${api_address}
     openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret ${metadata_proxy_shared_secret}
