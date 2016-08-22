@@ -15,7 +15,7 @@ function configure_cinder_storage()
 		( vgdisplay cinder-volumes ) > /dev/null 2>&1
 		if [[ $? != 0 ]]; then
 			if [[ -b ${cinder_iscsi_partition} ]]; then
-				pvcreate ${cinder_iscsi_partition}
+				( pvcreate ${cinder_iscsi_partition}
 				vgcreate cinder-volumes ${cinder_iscsi_partition} ) > /dev/null 2>&1
 			else
 				( parted -s ${cinder_iscsi_drive} mklabel gpt
