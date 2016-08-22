@@ -379,7 +379,7 @@ function configure_repos()
 
 	rpm -q rdo-release-mitaka > /dev/null 2>&1
 	if [[ $? == 1 ]]; then
-		( yum -y -q install https://repos.fedorapeople.org/repos/openstack/openstack-mitaka/rdo-release-mitaka-1.noarch.rpm  ) > /dev/null
+		( yum -y -q install https://repos.fedorapeople.org/repos/openstack/openstack-mitaka/rdo-release-mitaka-5.noarch.rpm  ) > /dev/null
 	fi
 
 	rpm -q epel-release > /dev/null 2>&1

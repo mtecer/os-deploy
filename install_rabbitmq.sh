@@ -5,9 +5,10 @@ function install_rabbitmq()
     echo "rabbitmq    soft    nofile    8192" >  /etc/security/limits.d/rabbitmq.conf
     echo "rabbitmq    hard    nofile    8192" >> /etc/security/limits.d/rabbitmq.conf
 
-    ( rpm -q erlang-solutions || yum -y -q install http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm ) > /dev/null
+    # ( rpm -q erlang-solutions || yum -y -q install http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm ) > /dev/null
 
-    ( rpm -q rabbitmq-server || yum -y -q install http://www.rabbitmq.com/releases/rabbitmq-server/v3.6.1/rabbitmq-server-3.6.1-1.noarch.rpm ) > /dev/null
+    # ( rpm -q rabbitmq-server || yum -y -q install http://www.rabbitmq.com/releases/rabbitmq-server/v3.6.1/rabbitmq-server-3.6.1-1.noarch.rpm ) > /dev/null
+    ( rpm -q rabbitmq-server || yum -y -q install rabbitmq-server ) > /dev/null
 
     echo "NODENAME=rabbit@localhost"        >  /etc/rabbitmq/rabbitmq-env.conf
     echo "RABBITMQ_NODE_IP_ADDRESS=0.0.0.0" >> /etc/rabbitmq/rabbitmq-env.conf
