@@ -23,7 +23,7 @@ function install_dashboard()
 	ALLOWED_HOSTS = ['*', ]
 
 	OPENSTACK_HOST = "${api_address}"
-	OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
+	OPENSTACK_KEYSTONE_URL = "${protocol}://%s:5000/v3" % OPENSTACK_HOST
 
 	SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 	CACHES = {

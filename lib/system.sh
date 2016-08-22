@@ -59,7 +59,7 @@ function __finish_installation()
     print -s " **** Installation completed succesfully **** "
 	echo ""
 	echo "Additional Information:"
-	echo " * To access the OpenStack Dashboard browse to : http://${api_address}"
+	echo " * To access the OpenStack Dashboard browse to : ${protocol}://${api_address}"
 	echo " * You can find your credentials in the admin-openrc.sh in your home directory"
 }
 
@@ -81,6 +81,7 @@ function __generate_config_file()
 		VLAN_NIC="eth3"
 
 		NETWORKING=${NETWORKING}
+		PROXY=${PROXY}
 
 		VXLAN_NETWORK="10.199.52.0"
 		VLAN_NETWORK="10.199.54.0"
@@ -89,6 +90,9 @@ function __generate_config_file()
 		# API_ADDRESS=$(hostname --ip-address)
 		# MY_IP=$(hostname --ip-address)
 		# HOSTNAME=$(hostname)
+
+		TLS=${TLS}
+		PROTOCOL=${PROTOCOL}
 
 		ADMIN_TOKEN=$(openssl rand -hex 20)
 		METERING_SECRET=$(openssl rand -hex 10)
@@ -166,6 +170,7 @@ function __set_config_variables()
 		vlan_nic=${VLAN_NIC:-"eth3"}
 
 		networking=${NETWORKING}
+		proxy=${PROXY}
 
 		vxlan_network=${VXLAN_NETWORK:-127.0.0.1}
 		vlan_network=${VLAN_NETWORK:-127.0.0.1}
@@ -176,6 +181,9 @@ function __set_config_variables()
 		api_address=${API_ADDRESS:-127.0.0.1}
 		my_ip=$(hostname --ip-address)
 		hostname=$(hostname)
+
+		tls=${TLS:-false}
+		protocol=${PROTOCOL:-http}
 
 		admin_token=${ADMIN_TOKEN:-UNDEFINED}
 		metering_secret=${METERING_SECRET:-UNDEFINED}
@@ -251,6 +259,7 @@ function __print_config()
 	VLAN_NIC        = "${vlan_nic}"
 
 	NETWORKING      = "${networking}"
+	PROXY			= "${proxy}"
 
 	VXLAN_NETWORK   = "${vxlan_network}"
 	VLAN_NETWORK    = "${vlan_network}"
@@ -258,6 +267,9 @@ function __print_config()
 	API_ADDRESS     = "${api_address}"
 	MY_IP           = "${my_ip}"
 	HOSTNAME        = "${hostname}"
+
+	TLS                             = "${tls}""
+	PROTOCOL                        = "${protocol}"
 
 	ADMIN_TOKEN                     = "${admin_token}"
 	METERING_SECRET                 = "${metering_secret}"
@@ -361,8 +373,8 @@ function configure_repos()
 
 	egrep 'ip_resolve|proxy' /etc/yum.conf > /dev/null 2>&1
 	if [[ $? == 1 ]]; then
-		sed -i '/\[main\]/ a\# proxy=http://10.199.103.207:3128' /etc/yum.conf
-		sed -i '/\[main\]/ a\# ip_resolve=4' /etc/yum.conf
+		sed -i "/\[main\]/ a\# proxy=${proxy}" /etc/yum.conf
+		sed -i "/\[main\]/ a\# ip_resolve=4" /etc/yum.conf
 	fi
 
 	rpm -q rdo-release-mitaka > /dev/null 2>&1

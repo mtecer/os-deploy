@@ -17,7 +17,7 @@ function install_ceilometer_api()
 
 	openstack-config --set ${ceilometer_config_file} publisher telemetry_secret $metering_secret
 
-	openstack-config --set ${ceilometer_config_file} service_credentials auth_url http://${api_address}:35357
+	openstack-config --set ${ceilometer_config_file} service_credentials auth_url ${protocol}://${api_address}:35357
 	openstack-config --set ${ceilometer_config_file} service_credentials auth_type password
 	openstack-config --set ${ceilometer_config_file} service_credentials project_domain_name default
 	openstack-config --set ${ceilometer_config_file} service_credentials user_domain_name default
@@ -77,7 +77,7 @@ function install_ceilometer_compute()
 	openstack-config --set ${ceilometer_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${ceilometer_config_file} DEFAULT rpc_backend rabbit
 
-	openstack-config --set ${ceilometer_config_file} service_credentials os_auth_url http://${api_address}:5000
+	openstack-config --set ${ceilometer_config_file} service_credentials os_auth_url ${protocol}://${api_address}:5000
 	openstack-config --set ${ceilometer_config_file} service_credentials os_username ceilometer
 	openstack-config --set ${ceilometer_config_file} service_credentials os_tenant_name service
 	openstack-config --set ${ceilometer_config_file} service_credentials os_password ${keystone_ceilometer_password}

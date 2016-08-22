@@ -1,7 +1,7 @@
 function __configure_neutron_in_nova()
 {
     openstack-config --set /etc/nova/nova.conf neutron url http://${api_address}:9696
-    openstack-config --set /etc/nova/nova.conf neutron auth_url http://${api_address}:35357
+    openstack-config --set /etc/nova/nova.conf neutron auth_url ${protocol}://${api_address}:35357
     openstack-config --set /etc/nova/nova.conf neutron auth_type password
     openstack-config --set /etc/nova/nova.conf neutron project_domain_name default
     openstack-config --set /etc/nova/nova.conf neutron user_domain_name default

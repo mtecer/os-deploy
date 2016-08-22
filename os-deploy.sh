@@ -104,7 +104,7 @@ function deploy_controller_bundle()
 	install_dashboard
 	install_cinder
 	configure_cinder_api
-	configure_cinder_storage
+	# configure_cinder_storage
 	__finish_installation
 }
 
@@ -127,6 +127,22 @@ function deploy_compute_bundle()
 	install_cinder
 	configure_cinder_storage
 	__cleanup_systemd_permissions
+}
+
+function deploy_cinder_bundle()
+{
+	source ./install_cinder.sh
+	source ./install_cinder_api.sh
+	source ./install_cinder_storage_lvm.sh
+
+	__set_config_variables
+	configure_repos
+	configure_environment
+	configure_date
+	configure_limits
+	install_cinder
+	configure_cinder_storage
+	__finish_installation
 }
 
 function deploy_allinone_bundle()
@@ -178,12 +194,19 @@ ORCHESTRATION=false
 DESIGNATE=false
 MANILA=false
 MURANO=false
+TLS=false
+PROTOCOL='http'
+PROXY=""
 
 for i in "$@"
 do
 case $i in
 	-n=*|--networking=*)
 		NETWORKING="${i#*=}"
+		shift
+		;;
+	--proxy=*)
+		PROXY="${i#*=}"
 		shift
 		;;
 	-g|--generate-config)
@@ -214,6 +237,11 @@ case $i in
 		DESIGNATE=true
 		shift
 		;;
+	--tls)
+		TLS=true
+		PROTOCOL='https'
+		shift
+		;;
 	--controller)
 		__verify_role ${i:2}
 		deploy_controller_bundle
@@ -222,6 +250,11 @@ case $i in
 	--compute)
 		__verify_role ${i:2}
 		deploy_compute_bundle
+		shift
+		;;
+	--cinder)
+		__verify_role ${i:2}
+		deploy_cinder_bundle
 		shift
 		;;
 	--allinone)

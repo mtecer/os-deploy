@@ -19,14 +19,14 @@ function install_heat()
     openstack-config --set ${heat_config_file} DEFAULT stack_domain_admin_password ${keystone_heat_domain_admin_password}
     openstack-config --set ${heat_config_file} DEFAULT stack_user_domain_name heat
 
-    openstack-config --set ${heat_config_file} clients_keystone auth_uri http://${api_address}:35357
+    openstack-config --set ${heat_config_file} clients_keystone auth_uri ${protocol}://${api_address}:35357
 
     openstack-config --set ${heat_config_file} database connection 'mysql+pymysql://heat:${mysql_heat_password}@${api_address}/heat'
 
-    openstack-config --set ${heat_config_file} ec2authtoken auth_uri http://${api_address}:5000
+    openstack-config --set ${heat_config_file} ec2authtoken auth_uri ${protocol}://${api_address}:5000
 
     openstack-config --set ${heat_config_file} trustee auth_plugin password
-    openstack-config --set ${heat_config_file} trustee auth_url http://${api_address}:35357
+    openstack-config --set ${heat_config_file} trustee auth_url ${protocol}://${api_address}:35357
     openstack-config --set ${heat_config_file} trustee username heat
     openstack-config --set ${heat_config_file} trustee password ${keystone_heat_password}
     openstack-config --set ${heat_config_file} trustee user_domain_name default

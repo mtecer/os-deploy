@@ -32,7 +32,7 @@ function install_murano()
 
     openstack-config --set ${murano_config_file} murano url http://${api_address}:8082
 
-    openstack-config --set ${murano_config_file} keystone_authtoken auth_uri http://sandbox01:5000
+    openstack-config --set ${murano_config_file} keystone_authtoken auth_uri ${protocol}://${api_address}:5000
     openstack-config --set ${murano_config_file} keystone_authtoken auth_host ${api_address}
     openstack-config --set ${murano_config_file} keystone_authtoken auth_port 5000
     openstack-config --set ${murano_config_file} keystone_authtoken auth_protocol http

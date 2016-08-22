@@ -1,22 +1,22 @@
 function __generate_openrc()
 {
-	echo "export OS_PROJECT_DOMAIN_NAME=default"                >  /root/admin-openrc.sh
-	echo "export OS_USER_DOMAIN_NAME=default"                   >> /root/admin-openrc.sh
-	echo "export OS_PROJECT_NAME=admin"                         >> /root/admin-openrc.sh
-	echo "export OS_USERNAME=admin"                             >> /root/admin-openrc.sh
-	echo "export OS_PASSWORD=${keystone_admin_password}"        >> /root/admin-openrc.sh
-	echo "export OS_AUTH_URL=http://${api_address}:35357/v3"    >> /root/admin-openrc.sh
-	echo "export OS_IDENTITY_API_VERSION=3"                     >> /root/admin-openrc.sh
-	echo "export OS_VOLUME_API_VERSION=2"                       >> /root/admin-openrc.sh
-	echo "export OS_IMAGE_API_VERSION=2"						>> /root/admin-openrc.sh
+	echo "export OS_PROJECT_DOMAIN_NAME=default"                	>  /root/admin-openrc.sh
+	echo "export OS_USER_DOMAIN_NAME=default"                   	>> /root/admin-openrc.sh
+	echo "export OS_PROJECT_NAME=admin"                         	>> /root/admin-openrc.sh
+	echo "export OS_USERNAME=admin"                             	>> /root/admin-openrc.sh
+	echo "export OS_PASSWORD=${keystone_admin_password}"        	>> /root/admin-openrc.sh
+	echo "export OS_AUTH_URL=${protocol}://${api_address}:35357/v3"	>> /root/admin-openrc.sh
+	echo "export OS_IDENTITY_API_VERSION=3"                     	>> /root/admin-openrc.sh
+	echo "export OS_VOLUME_API_VERSION=2"                       	>> /root/admin-openrc.sh
+	echo "export OS_IMAGE_API_VERSION=2"							>> /root/admin-openrc.sh
 
 	source /root/admin-openrc.sh
 }
 
 function __configure_keystone()
 {
-	( openstack-config --set ${1} keystone_authtoken auth_uri http://${api_address}:5000
-	openstack-config --set ${1} keystone_authtoken auth_url http://${api_address}:35357
+	( openstack-config --set ${1} keystone_authtoken auth_uri ${protocol}://${api_address}:5000
+	openstack-config --set ${1} keystone_authtoken auth_url ${protocol}://${api_address}:35357
 	openstack-config --set ${1} keystone_authtoken memcached_servers ${api_address}:11211
 	openstack-config --set ${1} keystone_authtoken auth_type password
 	openstack-config --set ${1} keystone_authtoken project_domain_name default
@@ -33,7 +33,7 @@ function __configure_keystone()
 
 function __configure_service_credentials()
 {
-	openstack-config --set ${1} service_credentials auth_url http://${api_address}:35357
+	openstack-config --set ${1} service_credentials auth_url ${protocol}://${api_address}:35357
 	openstack-config --set ${1} service_credentials auth_type password
 	openstack-config --set ${1} service_credentials project_domain_name default
 	openstack-config --set ${1} service_credentials user_domain_name default

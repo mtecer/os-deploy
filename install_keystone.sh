@@ -4,7 +4,7 @@ function configure_endpoints()
 
 	unset ADMIN_TOKEN
 	export OS_TOKEN=${admin_token}
-	export OS_URL=http://${api_address}:35357/v3
+	export OS_URL=${protocol}://${api_address}:35357/v3
 	export OS_IDENTITY_API_VERSION=3
 
 	print -n "\tKeystone"
@@ -13,9 +13,9 @@ function configure_endpoints()
 	if [[ $? == 1 ]]; then
 		( openstack service create --name keystone --description "OpenStack Identity" identity
 
-		openstack endpoint create --region RegionOne identity public http://${api_address}:5000/v3
-		openstack endpoint create --region RegionOne identity internal http://${api_address}:5000/v3
-		openstack endpoint create --region RegionOne identity admin http://${api_address}:35357/v3
+		openstack endpoint create --region RegionOne identity public ${protocol}://${api_address}:5000/v3
+		openstack endpoint create --region RegionOne identity internal ${protocol}://${api_address}:5000/v3
+		openstack endpoint create --region RegionOne identity admin ${protocol}://${api_address}:35357/v3
 
 		openstack domain create --description "Default Domain" default
 
