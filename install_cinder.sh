@@ -2,7 +2,7 @@ function install_cinder()
 {
     print "Installing Cinder"
 
-    ( rpm -q openstack-cinder || yum -y install openstack-cinder ) > /dev/null
+    ( rpm -q openstack-cinder || yum -y install openstack-cinder python-keystonemiddleware ) > /dev/null
 
     sed -i '/logdir/d' /usr/share/cinder/cinder-dist.conf
 
