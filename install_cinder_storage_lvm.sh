@@ -45,8 +45,8 @@ function configure_cinder_storage()
 	openstack-config --set ${cinder_config_file} LVM_iSCSI volume_group cinder-volumes
 	openstack-config --set ${cinder_config_file} LVM_iSCSI volume_backend_name LVM_iSCSI
 
-	( cinder type-create ${__storage_name}
-	cinder type-key ${__storage_name} set volume_backend_name=${__storage_name} ) > /dev/null 2>&1
+	( cinder type-create LVM_iSCSI
+	cinder type-key LVM_iSCSI set volume_backend_name=LVM_iSCSI ) > /dev/null 2>&1
 
 	__enable_service openstack-cinder-volume
 	__start_service openstack-cinder-volume
