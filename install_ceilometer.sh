@@ -12,8 +12,13 @@ function install_ceilometer_api()
 
 	openstack-config --set ${ceilometer_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${ceilometer_config_file} DEFAULT rpc_backend rabbit
+    openstack-config --set ${ceilometer_config_file} DEFAULT verbose false
+
+    openstack-config --set ${ceilometer_config_file} api default_api_return_limit 1024
 
 	openstack-config --set ${ceilometer_config_file} database connection mongodb://ceilometer:${mongod_ceilometer_password}@${api_address}:27017/ceilometer
+    openstack-config --set ${ceilometer_config_file} database event_time_to_live 2592000
+    openstack-config --set ${ceilometer_config_file} database metering_time_to_live 2592000
 
 	openstack-config --set ${ceilometer_config_file} publisher telemetry_secret $metering_secret
 
@@ -27,7 +32,8 @@ function install_ceilometer_api()
 	openstack-config --set ${ceilometer_config_file} service_credentials interface internalURL
 	openstack-config --set ${ceilometer_config_file} service_credentials region_name RegionOne
 
-	sed -i 's/interval: 600/interval: 30/g' /etc/ceilometer/pipeline.yaml
+	# sed -i 's/interval: 600/interval: 30/g' /etc/ceilometer/pipeline.yaml
+	cat lib/ceilometer/pipeline.yaml > /etc/ceilometer/pipeline.yaml
 
 	__enable_service openstack-ceilometer-api
 	__enable_service openstack-ceilometer-notification
@@ -76,6 +82,7 @@ function install_ceilometer_compute()
 
 	openstack-config --set ${ceilometer_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${ceilometer_config_file} DEFAULT rpc_backend rabbit
+    openstack-config --set ${ceilometer_config_file} DEFAULT verbose false
 
 	openstack-config --set ${ceilometer_config_file} service_credentials os_auth_url ${protocol}://${api_address}:5000
 	openstack-config --set ${ceilometer_config_file} service_credentials os_username ceilometer
@@ -84,7 +91,8 @@ function install_ceilometer_compute()
 	openstack-config --set ${ceilometer_config_file} service_credentials interface internalURL
 	openstack-config --set ${ceilometer_config_file} service_credentials region_name RegionOne
 
-	sed -i 's/interval: 600/interval: 30/g' /etc/ceilometer/pipeline.yaml
+	# sed -i 's/interval: 600/interval: 30/g' /etc/ceilometer/pipeline.yaml
+	cat lib/ceilometer/pipeline.yaml > /etc/ceilometer/pipeline.yaml
 
 	openstack-config --set ${nova_config_file} DEFAULT instance_usage_audit True
 	openstack-config --set ${nova_config_file} DEFAULT instance_usage_audit_period hour
