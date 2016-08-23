@@ -105,6 +105,9 @@ function deploy_controller_bundle()
 	install_cinder
 	configure_cinder_api
 	# configure_cinder_storage
+	if [[ ${ORCHESTRATION} ]]; then
+		deploy_orchestration_controller_bundle
+	fi
 	__finish_installation
 }
 
@@ -124,8 +127,11 @@ function deploy_compute_bundle()
 	configure_limits
 	install_nova_compute
 	install_neutron_compute ${networking}
-	install_cinder
-	configure_cinder_storage
+	# install_cinder
+	# configure_cinder_storage
+	if [[ ${ORCHESTRATION} ]]; then
+		deploy_orchestration_compute_bundle
+	fi
 	__cleanup_systemd_permissions
 }
 
