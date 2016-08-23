@@ -6,7 +6,7 @@ function install_mongodb()
 
     egrep '^bind_ip|^smallfiles' /etc/mongod.conf > /dev/null 2>&1
     if [[ $? == 1 ]]; then
-        sed -i 's/#bind_ip = 127.0.0.1/bind_ip = 127.0.0.1/' /etc/mongod.conf
+        sed -i "s/#bind_ip = 127.0.0.1/bind_ip = ${api_address}/" /etc/mongod.conf
         sed -i 's/#smallfiles = true/smallfiles = true/g' /etc/mongod.conf
     fi
 
