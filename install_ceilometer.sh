@@ -12,7 +12,7 @@ function install_ceilometer_api()
 
 	openstack-config --set ${ceilometer_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${ceilometer_config_file} DEFAULT rpc_backend rabbit
-    openstack-config --set ${ceilometer_config_file} DEFAULT verbose false
+    openstack-config --set ${ceilometer_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,ceilometer.agent.manager=WARN'
 
     openstack-config --set ${ceilometer_config_file} api default_api_return_limit 1024
 
@@ -82,7 +82,7 @@ function install_ceilometer_compute()
 
 	openstack-config --set ${ceilometer_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${ceilometer_config_file} DEFAULT rpc_backend rabbit
-    openstack-config --set ${ceilometer_config_file} DEFAULT verbose false
+    openstack-config --set ${ceilometer_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,ceilometer.agent=WARN'
 
 	openstack-config --set ${ceilometer_config_file} service_credentials os_auth_url ${protocol}://${api_address}:5000
 	openstack-config --set ${ceilometer_config_file} service_credentials os_username ceilometer

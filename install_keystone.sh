@@ -207,7 +207,7 @@ function install_keystone()
 
 	openstack-config --set ${keystone_config_file} DEFAULT admin_token ${admin_token}
 	openstack-config --set ${keystone_config_file} DEFAULT log_dir /var/log/keystone
-	# openstack-config --set ${keystone_config_file} DEFAULT verbose False
+    openstack-config --set ${ceilometer_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,keystone.token=WARN'
 
 	openstack-config --set ${keystone_config_file} database connection mysql+pymysql://keystone:${mysql_keystone_password}@${api_address}/keystone
 
@@ -287,6 +287,8 @@ function install_keystone()
 
 	</VirtualHost>
 	HERE
+
+	sed -i 's/ admin_token_auth / /g' /etc/keystone/keystone-paste.ini
 
 	systemctl is-enabled openstack-keystone > /dev/null 2>&1 && systemctl disable openstack-keystone
 	systemctl is-active openstack-keystone > /dev/null 2>&1 && ( systemctl stop openstack-keystone && sleep 5 && print -s "DONE" )
