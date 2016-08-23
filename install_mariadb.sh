@@ -55,14 +55,14 @@ function install_mysql()
 	CREATE DATABASE cinder;
 	GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY "${mysql_cinder_password}";
 
+	CREATE DATABASE aodh;
+	GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY "${mysql_aodh_password}";
+
+	CREATE DATABASE heat;
+	GRANT ALL PRIVILEGES ON heat.* TO 'heat'@'%' IDENTIFIED BY "${mysql_heat_password}";
+
 	FLUSH PRIVILEGES;
 	HERE
-
-	# CREATE DATABASE aodh;
-	# GRANT ALL PRIVILEGES ON aodh.* TO 'aodh'@'%' IDENTIFIED BY "${mysql_aodh_password}";
-
-	# CREATE DATABASE heat;
-	# GRANT ALL PRIVILEGES ON heat.* TO 'heat'@'%' IDENTIFIED BY "${mysql_heat_password}";
 
 	# CREATE DATABASE designate;
 	# CREATE DATABASE designate_pool_manager;
