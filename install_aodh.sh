@@ -13,7 +13,7 @@ function install_aodh()
 	openstack-config --set ${aodh_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${aodh_config_file} DEFAULT rpc_backend rabbit
 
-	openstack-config --set ${aodh_config_file} database connection mysql+pymysql://aodh:mysql_aodh_password@${api_address}/aodh
+	openstack-config --set ${aodh_config_file} database connection mysql+pymysql://aodh:${mysql_aodh_password}@${api_address}/aodh
 
 	( su -s /bin/sh -c "aodh-dbsync" aodh ) > /dev/null 2>&1
 
