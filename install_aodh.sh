@@ -2,7 +2,7 @@ function install_aodh()
 {
 	print "Installing Aodh"
 
-	( rpm -q openstack-aodh-api openstack-aodh-evaluator openstack-aodh-notifier openstack-aodh-listener openstack-aodh-expirer || yum -y openstack-aodh-api openstack-aodh-evaluator openstack-aodh-notifier openstack-aodh-listener openstack-aodh-expirer python-ceilometerclient ) > /dev/null
+	( rpm -q openstack-aodh-api openstack-aodh-evaluator openstack-aodh-notifier openstack-aodh-listener openstack-aodh-expirer || yum -y install openstack-aodh-api openstack-aodh-evaluator openstack-aodh-notifier openstack-aodh-listener openstack-aodh-expirer python-ceilometerclient ) > /dev/null
 
 	__configure_keystone ${aodh_config_file} aodh ${keystone_aodh_password}
 

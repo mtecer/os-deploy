@@ -2,7 +2,7 @@ function install_ceilometer_api()
 {
 	print "Installing Ceilometer API"
 
-	( rpm -q openstack-ceilometer-api openstack-ceilometer-collector openstack-ceilometer-notification openstack-ceilometer-central || yum -y openstack-ceilometer-api openstack-ceilometer-collector openstack-ceilometer-notification openstack-ceilometer-central python-ceilometerclient ) > /dev/null
+	( rpm -q openstack-ceilometer-api openstack-ceilometer-collector openstack-ceilometer-notification openstack-ceilometer-central || yum -y install openstack-ceilometer-api openstack-ceilometer-collector openstack-ceilometer-notification openstack-ceilometer-central python-ceilometerclient ) > /dev/null
 
 	__configure_keystone ${ceilometer_config_file} ceilometer ${keystone_ceilometer_password}
 
