@@ -148,7 +148,7 @@ function deploy_cinder_bundle()
 	configure_limits
 	install_cinder
 	configure_cinder_storage
-	__finish_installation
+	__cleanup_systemd_permissions
 }
 
 function deploy_allinone_bundle()
