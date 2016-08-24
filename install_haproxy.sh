@@ -2,6 +2,9 @@ function install_haproxy()
 {
 	print "Installing HAProxy"
 
+	# echo 'net.ipv4.ip_nonlocal_bind=1' > /etc/sysctl.d/bind_nonlocal_ip.conf
+	# sysctl --system
+
 	( rpm -q haproxy || yum -y -q install haproxy ) > /dev/null
 
 	echo '$ModLoad imudp' > /etc/rsyslog.d/listen-udp.conf

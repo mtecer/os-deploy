@@ -98,7 +98,7 @@ function deploy_secondary_controller_bundle()
 	# install_rabbitmq
 	install_memcache
 	install_keystone
-	# configure_endpoints
+	configure_endpoints
 	install_glance
 	install_nova_api
 	install_neutron_api ${networking}
