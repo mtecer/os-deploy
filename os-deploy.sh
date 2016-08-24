@@ -87,6 +87,7 @@ function deploy_controller_bundle()
 	source ./install_cinder.sh
 	source ./install_cinder_api.sh
 	source ./install_cinder_storage_lvm.sh
+	source ./install_haproxy.sh
 
 	__set_config_variables
 	configure_repos
@@ -108,6 +109,7 @@ function deploy_controller_bundle()
 	if [[ ${ORCHESTRATION} ]]; then
 		deploy_orchestration_controller_bundle
 	fi
+	install_haproxy
 	__finish_installation
 }
 

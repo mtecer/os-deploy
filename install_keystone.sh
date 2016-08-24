@@ -207,7 +207,7 @@ function install_keystone()
 
 	openstack-config --set ${keystone_config_file} DEFAULT admin_token ${admin_token}
 	openstack-config --set ${keystone_config_file} DEFAULT log_dir /var/log/keystone
-    openstack-config --set ${ceilometer_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,keystone.token=WARN'
+    openstack-config --set ${keystone_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,keystone.token=WARN,keystone.common=WARN'
 
 	openstack-config --set ${keystone_config_file} database connection mysql+pymysql://keystone:${mysql_keystone_password}@${api_address}/keystone
 
@@ -227,66 +227,9 @@ function install_keystone()
 		sed -i "s/^#ServerName www.example.com:80/ServerName $(hostname -s)/g" /etc/httpd/conf/httpd.conf
 	fi
 
-	cat <<-HERE > /etc/httpd/conf.d/keystone.conf
-	Listen 5000
-	Listen 35357
-
-	<VirtualHost *:5000>
-
-		<Directory /usr/bin>
-			<IfVersion >= 2.4>
-				Require all granted
-			</IfVersion>
-			<IfVersion < 2.4>
-				Order allow,deny
-				Allow from all
-			</IfVersion>
-		</Directory>
-
-		WSGIDaemonProcess keystone-public processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
-		WSGIProcessGroup keystone-public
-		WSGIScriptAlias / /usr/bin/keystone-wsgi-public
-		WSGIApplicationGroup %{GLOBAL}
-		WSGIPassAuthorization On
-		<IfVersion >= 2.4>
-		  ErrorLogFormat "%{cu}t %M"
-		</IfVersion>
-
-		LogLevel info
-
-		ErrorLog  /var/log/httpd/keystone-error.log
-		CustomLog /var/log/httpd/keystone-access.log combined
-
-	</VirtualHost>
-
-	<VirtualHost *:35357>
-
-		<Directory /usr/bin>
-			<IfVersion >= 2.4>
-				Require all granted
-			</IfVersion>
-			<IfVersion < 2.4>
-				Order allow,deny
-				Allow from all
-			</IfVersion>
-		</Directory>
-
-		WSGIDaemonProcess keystone-admin processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
-		WSGIProcessGroup keystone-admin
-		WSGIScriptAlias / /usr/bin/keystone-wsgi-admin
-		WSGIApplicationGroup %{GLOBAL}
-		WSGIPassAuthorization On
-		<IfVersion >= 2.4>
-		  ErrorLogFormat "%{cu}t %M"
-		</IfVersion>
-
-		LogLevel info
-
-		ErrorLog  /var/log/httpd/keystone-error.log
-		CustomLog /var/log/httpd/keystone-access.log combined
-
-	</VirtualHost>
-	HERE
+	cat lib/keystone/keystone-wsgi.conf.yaml > /etc/httpd/conf.d/keystone.conf
+	chown root.root /etc/httpd/conf.d/keystone.conf
+	chmod 0644 /etc/httpd/conf.d/keystone.conf
 
 	sed -i 's/ admin_token_auth / /g' /etc/keystone/keystone-paste.ini
 

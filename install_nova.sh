@@ -33,6 +33,9 @@ function install_nova_api()
     openstack-config --set ${nova_config_file} DEFAULT rpc_backend rabbit
     openstack-config --set ${nova_config_file} DEFAULT dhcp_domain ${dhcp_domain_name}
 
+    openstack-config --set ${nova_config_file} DEFAULT osapi_compute_listen 127.0.0.1
+    openstack-config --set ${nova_config_file} DEFAULT metadata_listen 127.0.0.1
+
     openstack-config --set ${nova_config_file} api_database connection "mysql+pymysql://nova:${mysql_nova_password}@${api_address}/nova_api"
 
     openstack-config --set ${nova_config_file} cinder os_region_name RegionOne
@@ -48,6 +51,7 @@ function install_nova_api()
 
     openstack-config --set ${nova_config_file} vnc vncserver_listen '$my_ip'
     openstack-config --set ${nova_config_file} vnc vncserver_proxyclient_address '$my_ip'
+    openstack-config --set ${nova_config_file} vnc novncproxy_host 127.0.0.1
 
     ( su -s /bin/sh -c "nova-manage api_db sync" nova ) > /dev/null 2>&1
     ( su -s /bin/sh -c "nova-manage db sync" nova ) > /dev/null 2>&1

@@ -2,6 +2,8 @@ function configure_cinder_api()
 {
 	print "Configuring Cinder API"
 
+    openstack-config --set ${cinder_config_file} DEFAULT osapi_volume_listen 127.0.0.1
+
 	( su -s /bin/sh -c "cinder-manage db sync" cinder ) > /dev/null 2>&1
 
 	__enable_service openstack-cinder-api

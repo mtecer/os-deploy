@@ -7,14 +7,15 @@ function install_glance()
 	__configure_keystone ${glance_api_config_file} glance ${keystone_glance_password}
 	__configure_keystone ${glance_registry_config_file} glance ${keystone_glance_password}
 
-	openstack-config --set ${glance_api_config_file} DEFAULT verbose False
 	openstack-config --set ${glance_api_config_file} DEFAULT show_image_direct_url True
+
+	openstack-config --set ${glance_api_config_file} DEFAULT bind_host 127.0.0.1
 
 	openstack-config --set ${glance_api_config_file} database connection mysql+pymysql://glance:${mysql_glance_password}@${api_address}/glance
 
 	openstack-config --set ${glance_api_config_file} paste_deploy flavor keystone
 
-	openstack-config --set ${glance_registry_config_file} DEFAULT verbose False
+	openstack-config --set ${glance_registry_config_file} DEFAULT bind_host 127.0.0.1
 
 	openstack-config --set ${glance_registry_config_file} database connection mysql+pymysql://glance:${mysql_glance_password}@${api_address}/glance
 
