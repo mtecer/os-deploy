@@ -13,6 +13,8 @@ function install_aodh()
 	openstack-config --set ${aodh_config_file} DEFAULT auth_strategy keystone
 	openstack-config --set ${aodh_config_file} DEFAULT rpc_backend rabbit
 
+	openstack-config --set ${aodh_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=INFO,oslo.messaging=INFO,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,aodh.evaluator=WARN'
+
 	openstack-config --set ${aodh_config_file} database connection mysql+pymysql://aodh:${mysql_aodh_password}@${api_address}/aodh
 
 	( su -s /bin/sh -c "aodh-dbsync" aodh ) > /dev/null 2>&1

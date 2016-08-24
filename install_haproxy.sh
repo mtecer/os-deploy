@@ -11,6 +11,7 @@ function install_haproxy()
 	echo '$InputTCPServerRun 514' >> /etc/rsyslog.d/listen-tcp.conf
 
 	echo 'local2.*                       /var/log/haproxy.log' > /etc/rsyslog.d/haproxy.conf
+	echo '& stop' >> /etc/rsyslog.d/haproxy.conf
 
 	systemctl restart rsyslog
 
