@@ -227,7 +227,7 @@ function install_keystone()
 		sed -i "s/^#ServerName www.example.com:80/ServerName $(hostname -s)/g" /etc/httpd/conf/httpd.conf
 	fi
 
-	cat lib/keystone/keystone-wsgi.conf.yaml > /etc/httpd/conf.d/keystone.conf
+	cat lib/keystone/keystone-wsgi.conf > /etc/httpd/conf.d/keystone.conf
 	chown root.root /etc/httpd/conf.d/keystone.conf
 	chmod 0644 /etc/httpd/conf.d/keystone.conf
 
