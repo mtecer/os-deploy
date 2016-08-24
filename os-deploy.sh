@@ -72,6 +72,47 @@ function deploy_designate_bundle()
 	install_designate
 }
 
+function deploy_secondary_controller_bundle()
+{
+	# source ./install_mariadb.sh
+	# source ./install_rabbitmq.sh
+	source ./install_memcache.sh
+	source ./install_keystone.sh
+	source ./install_glance.sh
+	source ./install_nova.sh
+	source ./install_l2_networking.sh
+	source ./install_l3_networking.sh
+	source ./install_neutron.sh
+	source ./install_dashboard.sh
+	source ./install_cinder.sh
+	source ./install_cinder_api.sh
+	# source ./install_cinder_storage_lvm.sh
+	source ./install_haproxy.sh
+
+	__set_config_variables
+	configure_repos
+	configure_environment
+	configure_date
+	configure_limits
+	# install_mysql
+	# install_rabbitmq
+	install_memcache
+	install_keystone
+	# configure_endpoints
+	install_glance
+	install_nova_api
+	install_neutron_api ${networking}
+	install_dashboard
+	install_cinder
+	configure_cinder_api
+	# configure_cinder_storage
+	if [[ ${ORCHESTRATION} ]]; then
+		deploy_orchestration_controller_bundle
+	fi
+	install_haproxy
+	__finish_installation
+}
+
 function deploy_controller_bundle()
 {
 	source ./install_mariadb.sh
@@ -253,6 +294,11 @@ case $i in
 	--controller)
 		__verify_role ${i:2}
 		deploy_controller_bundle
+		shift
+		;;
+	--secondary-controller)
+		__verify_role ${i:2}
+		deploy_secondary_controller_bundle
 		shift
 		;;
 	--compute)

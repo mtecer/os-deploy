@@ -20,8 +20,8 @@ function install_haproxy()
 	chown root.root /etc/haproxy/haproxy.cfg
 	chmod 0644 /etc/haproxy/haproxy.cfg
 
-	__enable_service haproxy
-	__start_service haproxy
+	# __enable_service haproxy
+	# __start_service haproxy
 
 	print -s "DONE"
 }
