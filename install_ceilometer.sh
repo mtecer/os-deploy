@@ -85,12 +85,16 @@ function install_ceilometer_compute()
 	openstack-config --set ${ceilometer_config_file} DEFAULT rpc_backend rabbit
     openstack-config --set ${ceilometer_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,ceilometer.agent=WARN'
 
-	openstack-config --set ${ceilometer_config_file} service_credentials os_auth_url ${protocol}://${api_address}:5000
-	openstack-config --set ${ceilometer_config_file} service_credentials os_username ceilometer
-	openstack-config --set ${ceilometer_config_file} service_credentials os_tenant_name service
-	openstack-config --set ${ceilometer_config_file} service_credentials os_password ${keystone_ceilometer_password}
+	openstack-config --set ${ceilometer_config_file} service_credentials auth_url ${protocol}://${api_address}:35357
+	openstack-config --set ${ceilometer_config_file} service_credentials auth_type password
+	openstack-config --set ${ceilometer_config_file} service_credentials project_domain_name default
+	openstack-config --set ${ceilometer_config_file} service_credentials user_domain_name default
+	openstack-config --set ${ceilometer_config_file} service_credentials project_name service
+	openstack-config --set ${ceilometer_config_file} service_credentials username ceilometer
+	openstack-config --set ${ceilometer_config_file} service_credentials password ${keystone_ceilometer_password}
 	openstack-config --set ${ceilometer_config_file} service_credentials interface internalURL
 	openstack-config --set ${ceilometer_config_file} service_credentials region_name RegionOne
+
 
 	# sed -i 's/interval: 600/interval: 30/g' /etc/ceilometer/pipeline.yaml
 	cat lib/ceilometer/pipeline.yaml > /etc/ceilometer/pipeline.yaml
