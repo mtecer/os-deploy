@@ -81,6 +81,12 @@ function __openstack_images()
 		  --disk-format qcow2 \
 		  --visibility public ) > /dev/null 2>&1
 	fi
+
+	if [[ ! -f /images/CentOS-7-x86_64-GenericCloud-1607.qcow2.xz ]]; then
+		( wget -c http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1607.qcow2.xz -O /images/CentOS-7-x86_64-GenericCloud-1607.qcow2.xz ) > /dev/null 2>&1
+
+	fi
+	unxz CentOS-7-x86_64-GenericCloud-1607.qcow2.xz
 }
 
 function __openstack_flavors()

@@ -7,6 +7,8 @@ function install_dashboard()
 	sed -i 's/^WSGIScriptAlias \/dashboard/WSGIScriptAlias \//' /etc/httpd/conf.d/openstack-dashboard.conf
 	sed -i 's/^Alias \/dashboard\/static/Alias \/static/' /etc/httpd/conf.d/openstack-dashboard.conf
 
+	egrep -q 'Listen 127.0.0.1:80' /etc/httpd/conf/httpd.conf || ( sed -i 's/^Listen 80/Listen 127.0.0.1:80/' /etc/httpd/conf/httpd.conf && systemctl restart httpd )
+
 	touch /usr/share/openstack-dashboard/openstack_dashboard/local/local_settings.d/_99_override_all_configuration.py
 	_md5sum_original=$(md5sum /usr/share/openstack-dashboard/openstack_dashboard/local/local_settings.d/_99_override_all_configuration.py)
 

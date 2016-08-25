@@ -2,7 +2,7 @@ function install_mysql()
 {
 	print "Installing MariaDB"
 
-	( rpm -q mariadb-server || yum -y -q install mariadb mariadb-server python2-PyMySQL mariadb-libs ) > /dev/null
+	( rpm -q mariadb-server || yum -y -q install socat innotop mariadb-galera-server mariadb-galera-common mariadb-libs mariadb-bench rsync mariadb mariadb-server python2-PyMySQL ) > /dev/null
 
 	echo "mysqld      soft    nofile    8192" >  /etc/security/limits.d/mysql.conf
 	echo "mysqld      hard    nofile    8192" >> /etc/security/limits.d/mysql.conf
@@ -33,6 +33,16 @@ function install_mysql()
 	__start_service mariadb
 
 	mysql -u root <<-HERE > /dev/null 2>&1
+	UPDATE mysql.user SET Password=PASSWORD("${mysql_root_password}") WHERE User='root';
+	DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+	DELETE FROM mysql.user WHERE User='';
+	DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';
+
+	GRANT ALL PRIVILEGES ON *.* TO 'galera_admin'@'%' IDENTIFIED BY "${mysql_root_password}" WITH GRANT OPTION;
+	FLUSH PRIVILEGES;
+	HERE
+
+	mysql -u root -p${mysql_root_password} <<-HERE > /dev/null 2>&1
 	UPDATE mysql.user SET Password=PASSWORD("${mysql_root_password}") WHERE User='root';
 	DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 	DELETE FROM mysql.user WHERE User='';
