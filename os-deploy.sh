@@ -160,8 +160,8 @@ function deploy_compute_bundle()
 	source ./install_l2_networking.sh
 	source ./install_l3_networking.sh
 	source ./install_neutron.sh
-	source ./install_cinder.sh
-	source ./install_cinder_storage_lvm.sh
+	# source ./install_cinder.sh
+	# source ./install_cinder_storage_lvm.sh
 
 	__set_config_variables
 	configure_repos
