@@ -20,6 +20,8 @@ function install_haproxy()
 
 	cat lib/haproxy/haproxy.cfg > /etc/haproxy/haproxy.cfg
 	sed -i "s/%__API_ADDRESS__%/${api_address}/g" /etc/haproxy/haproxy.cfg
+	sed -i "s/%__HAPROXY_ADMIN_PASSWORD__%/${haproxy_admin_password}/g" /etc/haproxy/haproxy.cfg
+
 	chown root.root /etc/haproxy/haproxy.cfg
 	chmod 0644 /etc/haproxy/haproxy.cfg
 

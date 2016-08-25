@@ -103,6 +103,8 @@ function __generate_config_file()
 		MANILA_ISCSI_DRIVE='/dev/sdc'
 		MANILA_ISCSI_PARTITION='/dev/sdc1'
 
+		HAPROXY_ADMIN_PASSWORD=$(__generate_password)
+
 		MYSQL_AODH_PASSWORD=$(__generate_password)
 		MYSQL_CINDER_PASSWORD=$(__generate_password)
 		MYSQL_DESIGNATE_PASSWORD=$(__generate_password)
@@ -194,6 +196,8 @@ function __set_config_variables()
 		manila_iscsi_drive=${MANILA_ISCSI_DRIVE:-/dev/sdc}
 		manila_iscsi_partition=${MANILA_ISCSI_PARTITION:-/dev/sdc1}
 
+		haproxy_admin_password=${HAPROXY_ADMIN_PASSWORD:-password}
+
 		mysql_aodh_password=${MYSQL_AODH_PASSWORD:-password}
 		mysql_cinder_password=${MYSQL_CINDER_PASSWORD:-password}
 		mysql_designate_password=${MYSQL_DESIGNATE_PASSWORD:-password}
@@ -279,6 +283,8 @@ function __print_config()
 	CINDER_ISCSI_PARTITION          = "${cinder_iscsi_partition}"
 	MANILA_ISCSI_DRIVE              = "${manila_iscsi_drive}"
 	MANILA_ISCSI_PARTITION          = "${manila_iscsi_partition}"
+
+	HAPROXY_ADMIN_PASSWORD			= "${haproxy_admin_password}"
 
 	MYSQL_AODH_PASSWORD             = "${mysql_aodh_password}"
 	MYSQL_CINDER_PASSWORD           = "${mysql_cinder_password}"

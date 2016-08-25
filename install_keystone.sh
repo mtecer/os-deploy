@@ -209,7 +209,11 @@ function install_keystone()
 	openstack-config --set ${keystone_config_file} DEFAULT log_dir /var/log/keystone
     openstack-config --set ${keystone_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,keystone.token=WARN,keystone.common=WARN'
 
+    openstack-config --set ${keystone_config_file} assignment driver sql
+
 	openstack-config --set ${keystone_config_file} database connection mysql+pymysql://keystone:${mysql_keystone_password}@${api_address}/keystone
+
+    openstack-config --set ${keystone_config_file} identity driver sql
 
 	openstack-config --set ${keystone_config_file} token provider fernet
 	openstack-config --set ${keystone_config_file} token expiration 14400
