@@ -4,9 +4,9 @@ function install_dashboard()
 
 	( rpm -q openstack-dashboard || yum -y install openstack-dashboard ) > /dev/null
 
-	sed -i 's/^WSGIScriptAlias \/dashboard/WSGIScriptAlias \//' /etc/httpd/conf.d/openstack-dashboard.conf
-	sed -i 's/^Alias \/dashboard\/static/Alias \/static/' /etc/httpd/conf.d/openstack-dashboard.conf
-	sed -i 's/\(^CustomLog.*combined$\)/\1 env=!do-not-log-this-request/g' openstack-dashboard.conf
+	cat lib/dashboard/openstack-dashboard.conf > /etc/httpd/conf.d/openstack-dashboard.conf
+	chown root.root /etc/httpd/conf.d/openstack-dashboard.conf
+	chmod 0644 /etc/httpd/conf.d/openstack-dashboard.conf
 
 	egrep -q 'Listen 127.0.0.1:80' /etc/httpd/conf/httpd.conf || ( sed -i 's/^Listen 80/Listen 127.0.0.1:80/' /etc/httpd/conf/httpd.conf && systemctl restart httpd )
 
