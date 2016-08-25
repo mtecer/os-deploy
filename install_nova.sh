@@ -107,13 +107,21 @@ function install_nova_compute()
     openstack-config --set ${nova_config_file} vnc vncserver_proxyclient_address '$my_ip'
     openstack-config --set ${nova_config_file} vnc novncproxy_base_url "http://${api_address}:6080/vnc_auto.html"
 
+    sed -i -e 's/#listen_tls = 0/listen_tls = 0/g' \
+        -e 's/#listen_tcp = 1/listen_tcp = 1/g' \
+        -e 's/#listen_addr = "192.168.0.1"/listen_addr = "0.0.0.0"/g' \
+        -e 's/#tcp_port = "16509"/tcp_port = "16509"/g' \
+        -e 's/#auth_tcp = "sasl"/auth_tcp = "none"/g' \
+        /etc/libvirt/libvirtd.conf
+
+    sed -i -e 's/#LIBVIRTD_ARGS="--listen"/LIBVIRTD_ARGS="--listen"/g' \
+        /etc/sysconfig/libvirtd
+
     __enable_service libvirtd
     __enable_service openstack-nova-compute
 
     __start_service libvirtd
     __start_service openstack-nova-compute
-
-    sleep 5
 
     ( openstack aggregate show ${__aggregate} ) > /dev/null 2>&1
     if [[ $? != 0 ]]; then

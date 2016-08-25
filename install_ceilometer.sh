@@ -75,7 +75,7 @@ function install_ceilometer_compute()
 {
 	print "Installing Ceilometer Compute"
 
-	( rpm -q openstack-ceilometer-compute || yum -y openstack-ceilometer-compute python-ceilometerclient python-pecan ) > /dev/null
+	( rpm -q openstack-ceilometer-compute || yum -y install openstack-ceilometer-compute python-ceilometerclient python-pecan ) > /dev/null
 
 	__configure_keystone ${ceilometer_config_file} ceilometer ${keystone_ceilometer_password}
 
