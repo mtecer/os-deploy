@@ -227,11 +227,16 @@ function install_keystone()
 		sed -i "s/^#ServerName www.example.com:80/ServerName $(hostname -s)/g" /etc/httpd/conf/httpd.conf
 	fi
 
+	echo '# SetEnvIf Request_URI \.gif do-not-log-this-request' > /etc/httpd/conf.d/donotlog.conf
+	echo '# SetEnvIf Remote_Addr "127\.0\.0\.1" do-not-log-this-request' >> /etc/httpd/conf.d/donotlog.conf
+	echo 'SetEnvIf Request_Method OPTIONS do-not-log-this-request' >> /etc/httpd/conf.d/donotlog.conf
+	echo '# Example Usage: CustomLog logs/access_log common env=!do-not-log-this-request' >> /etc/httpd/conf.d/donotlog.conf
+
 	cat lib/keystone/keystone-wsgi.conf > /etc/httpd/conf.d/keystone.conf
 	chown root.root /etc/httpd/conf.d/keystone.conf
 	chmod 0644 /etc/httpd/conf.d/keystone.conf
 
-	# sed -i 's/ admin_token_auth / /g' /etc/keystone/keystone-paste.ini
+	sed -i 's/ admin_token_auth / /g' /etc/keystone/keystone-paste.ini
 
 	systemctl is-enabled openstack-keystone > /dev/null 2>&1 && systemctl disable openstack-keystone
 	systemctl is-active openstack-keystone > /dev/null 2>&1 && ( systemctl stop openstack-keystone && sleep 5 && print -s "DONE" )

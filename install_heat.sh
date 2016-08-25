@@ -8,8 +8,6 @@ function install_heat()
 
     __configure_oslo_messaging_rabbit ${heat_config_file}
 
-    openstack-config --set ${heat_config_file} DEFAULT verbose False
-
     openstack-config --set ${heat_config_file} DEFAULT rpc_backend rabbit
 
     openstack-config --set ${heat_config_file} DEFAULT heat_metadata_server_url http://${api_address}:8000

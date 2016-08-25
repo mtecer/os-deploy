@@ -6,6 +6,7 @@ function install_dashboard()
 
 	sed -i 's/^WSGIScriptAlias \/dashboard/WSGIScriptAlias \//' /etc/httpd/conf.d/openstack-dashboard.conf
 	sed -i 's/^Alias \/dashboard\/static/Alias \/static/' /etc/httpd/conf.d/openstack-dashboard.conf
+	sed -i 's/\(^CustomLog.*combined$\)/\1 env=!do-not-log-this-request/g' openstack-dashboard.conf
 
 	egrep -q 'Listen 127.0.0.1:80' /etc/httpd/conf/httpd.conf || ( sed -i 's/^Listen 80/Listen 127.0.0.1:80/' /etc/httpd/conf/httpd.conf && systemctl restart httpd )
 
