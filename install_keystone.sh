@@ -231,7 +231,7 @@ function install_keystone()
 	chown root.root /etc/httpd/conf.d/keystone.conf
 	chmod 0644 /etc/httpd/conf.d/keystone.conf
 
-	sed -i 's/ admin_token_auth / /g' /etc/keystone/keystone-paste.ini
+	# sed -i 's/ admin_token_auth / /g' /etc/keystone/keystone-paste.ini
 
 	systemctl is-enabled openstack-keystone > /dev/null 2>&1 && systemctl disable openstack-keystone
 	systemctl is-active openstack-keystone > /dev/null 2>&1 && ( systemctl stop openstack-keystone && sleep 5 && print -s "DONE" )
