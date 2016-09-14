@@ -75,7 +75,7 @@ function deploy_designate_bundle()
 function deploy_secondary_controller_bundle()
 {
 	# source ./install_mariadb.sh
-	# source ./install_rabbitmq.sh
+	source ./install_rabbitmq.sh
 	source ./install_memcache.sh
 	source ./install_keystone.sh
 	source ./install_glance.sh
@@ -95,7 +95,7 @@ function deploy_secondary_controller_bundle()
 	configure_date
 	configure_limits
 	# install_mysql
-	# install_rabbitmq
+	install_rabbitmq
 	install_memcache
 	install_keystone
 	configure_endpoints

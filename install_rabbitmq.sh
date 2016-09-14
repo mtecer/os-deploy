@@ -5,12 +5,21 @@ function install_rabbitmq()
     echo "rabbitmq    soft    nofile    8192" >  /etc/security/limits.d/rabbitmq.conf
     echo "rabbitmq    hard    nofile    8192" >> /etc/security/limits.d/rabbitmq.conf
 
-    # ( rpm -q erlang-solutions || yum -y -q install http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm ) > /dev/null
-
-    # ( rpm -q rabbitmq-server || yum -y -q install http://www.rabbitmq.com/releases/rabbitmq-server/v3.6.1/rabbitmq-server-3.6.1-1.noarch.rpm ) > /dev/null
     ( rpm -q rabbitmq-server || yum -y -q install rabbitmq-server ) > /dev/null
 
-    echo "NODENAME=rabbit@localhost"        >  /etc/rabbitmq/rabbitmq-env.conf
+    if [[ ! -f /var/lib/rabbitmq/.erlang.cookie ]]; then
+        echo 'AFETHWOFTFMRAMEMQCWK' > /var/lib/rabbitmq/.erlang.cookie
+        chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
+        chmod 0400 /var/lib/rabbitmq/.erlang.cookie
+    fi
+
+    # rabbitmqctl stop_app
+    # rabbitmqctl join_cluster --ram rabbit@oa-controller01
+    # rabbitmqctl start_app
+    # rabbitmqctl cluster_status
+    # rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'
+
+    echo "NODENAME=rabbit@$(hostname -s)"   >  /etc/rabbitmq/rabbitmq-env.conf
     echo "RABBITMQ_NODE_IP_ADDRESS=0.0.0.0" >> /etc/rabbitmq/rabbitmq-env.conf
 
     __enable_service rabbitmq-server

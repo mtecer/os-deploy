@@ -17,7 +17,7 @@ function install_ceilometer_api()
     openstack-config --set ${ceilometer_config_file} api default_api_return_limit 1024
     openstack-config --set ${ceilometer_config_file} api host 127.0.0.1
 
-	openstack-config --set ${ceilometer_config_file} database connection mongodb://ceilometer:${mongod_ceilometer_password}@${api_address}:27017/ceilometer
+	openstack-config --set ${ceilometer_config_file} database connection mongodb://ceilometer:${mongod_ceilometer_password}@${mongod_servers}/ceilometer
     openstack-config --set ${ceilometer_config_file} database event_time_to_live 2592000
     openstack-config --set ${ceilometer_config_file} database metering_time_to_live 2592000
 

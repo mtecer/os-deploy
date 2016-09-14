@@ -49,6 +49,11 @@ function __configure_oslo_messaging_rabbit()
 	openstack-config --set ${1} oslo_messaging_rabbit rabbit_host ${rabbitmq_host}
 	openstack-config --set ${1} oslo_messaging_rabbit rabbit_userid ${rabbitmq_userid}
 	openstack-config --set ${1} oslo_messaging_rabbit rabbit_password ${rabbitmq_password}
+	openstack-config --set ${1} oslo_messaging_rabbit rabbit_retry_interval 1
+	openstack-config --set ${1} oslo_messaging_rabbit rabbit_retry_backoff 2
+	openstack-config --set ${1} oslo_messaging_rabbit rabbit_max_retries 0
+	openstack-config --set ${1} oslo_messaging_rabbit rabbit_durable_queues true
+	openstack-config --set ${1} oslo_messaging_rabbit rabbit_ha_queues true
 }
 
 function __add_ovs_bridge_port()

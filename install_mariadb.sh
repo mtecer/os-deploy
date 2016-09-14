@@ -7,6 +7,34 @@ function install_mysql()
 	echo "mysqld      soft    nofile    8192" >  /etc/security/limits.d/mysql.conf
 	echo "mysqld      hard    nofile    8192" >> /etc/security/limits.d/mysql.conf
 
+	cat <<-HERE > /etc/my.cnf.d/galera.cnf
+	[mysqld]
+	bind-address=0.0.0.0
+	binlog_format=ROW
+	default-storage-engine=innodb
+	innodb_autoinc_lock_mode=2
+
+	wsrep_auto_increment_control=1
+	wsrep_causal_reads=0
+	wsrep_certify_nonPK=1
+	wsrep_cluster_address=gcomm://
+	wsrep_cluster_name="galera"
+	wsrep_convert_LOCK_to_trx=0
+	wsrep_debug=0
+	wsrep_drupal_282555_workaround=0
+	wsrep_max_ws_rows=131072
+	wsrep_max_ws_size=1073741824
+	wsrep_on=ON
+	wsrep_node_address=$(hostname -i)
+	wsrep_node_name='$(hostname -s)'
+	wsrep_notify_cmd=
+	wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+	wsrep_retry_autocommit=1
+	wsrep_slave_threads=1
+	wsrep_sst_auth=galera_admin:${mysql_root_password}
+	wsrep_sst_method=rsync
+	HERE
+
 	cat <<-HERE > /etc/my.cnf.d/mariadb_openstack.cnf
 	[mysqld]
 	open_files_limit = 4096

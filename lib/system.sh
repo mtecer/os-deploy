@@ -117,6 +117,7 @@ function __generate_config_file()
 		MYSQL_NOVA_PASSWORD=$(__generate_password)
 		MYSQL_ROOT_PASSWORD=$(__generate_password)
 
+		MONGOD_SERVERS='127.0.0.1:27017,127.0.0.1:27017'
 		MONGOD_CEILOMETER_PASSWORD=$(__generate_password)
 
 		KEYSTONE_ADMIN_PASSWORD=$(__generate_password)
@@ -210,6 +211,7 @@ function __set_config_variables()
 		mysql_nova_password=${MYSQL_NOVA_PASSWORD:-password}
 		mysql_root_password=${MYSQL_ROOT_PASSWORD:-password}
 
+		mongod_servers=${MONGOD_SERVERS:-127.0.0.1:27017}
 		mongod_ceilometer_password=${MONGOD_CEILOMETER_PASSWORD:-password}
 
 		keystone_admin_password=${KEYSTONE_ADMIN_PASSWORD:-password}
@@ -298,6 +300,7 @@ function __print_config()
 	MYSQL_NOVA_PASSWORD             = "${mysql_nova_password}"
 	MYSQL_ROOT_PASSWORD             = "${mysql_root_password}"
 
+	MONGOD_SERVERS					= "${mongod_servers}"
 	MONGOD_CEILOMETER_PASSWORD      = "${mongod_ceilometer_password}"
 
 	KEYSTONE_ADMIN_PASSWORD             = "${keystone_admin_password}"
@@ -401,6 +404,11 @@ function configure_repos()
 	rpm -q elrepo-release > /dev/null 2>&1
 	if [[ $? == 1 ]]; then
 		( yum -y -q install http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm ) > /dev/null
+	fi
+
+	rpm -q ovirt-release40 > /dev/null 2>&1
+	if [[ $? == 1 ]]; then
+		( yum -y -q install http://resources.ovirt.org/pub/yum-repo/ovirt-release40.rpm ) > /dev/null
 	fi
 
     print -s "DONE"

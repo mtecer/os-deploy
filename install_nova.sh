@@ -36,6 +36,8 @@ function install_nova_api()
     openstack-config --set ${nova_config_file} DEFAULT osapi_compute_listen 127.0.0.1
     openstack-config --set ${nova_config_file} DEFAULT metadata_listen 127.0.0.1
 
+    openstack-config --set ${nova_config_file} DEFAULT scheduler_default_filters 'RetryFilter,AvailabilityZoneFilter,RamFilter,DiskFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,NUMATopologyFilter,AggregateInstanceExtraSpecsFilter'
+
     openstack-config --set ${nova_config_file} api_database connection "mysql+pymysql://nova:${mysql_nova_password}@${api_address}/nova_api"
 
     openstack-config --set ${nova_config_file} cinder os_region_name RegionOne
@@ -84,7 +86,7 @@ function install_nova_compute()
         ( rpm -e libcacard-devel-rhev libcacard-rhev libcacard-tools-rhev qemu-img-rhev qemu-kvm-common-rhev qemu-kvm-rhev qemu-kvm-rhev-debuginfo qemu-kvm-tools-rhev --nodeps  ) > /dev/null 2>&1
     fi
 
-    ( rpm -q openstack-nova-compute || yum -y -q install qemu-kvm qemu-kvm-tools openstack-nova-compute sysfsutils openstack-utils ) > /dev/null 2>&1
+    ( rpm -q openstack-nova-compute || yum -y -q install qemu-img-ev qemu-kvm-common-ev qemu-kvm-ev qemu-kvm-tools-ev openstack-nova-compute sysfsutils openstack-utils numactl ) > /dev/null 2>&1
 
     __configure_keystone ${nova_config_file} nova ${keystone_nova_password}
 
