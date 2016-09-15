@@ -78,7 +78,7 @@ function __generate_config_file()
 		MANAGEMENT_NIC="eth0"
 		VXLAN_NIC="eth1"
 		EXT_NIC="eth2"
-		VLAN_NIC="eth3"
+		VLAN_NIC="bond1"
 
 		NETWORKING=${NETWORKING}
 		PROXY=${PROXY}
@@ -97,6 +97,8 @@ function __generate_config_file()
 		ADMIN_TOKEN=$(openssl rand -hex 20)
 		METERING_SECRET=$(openssl rand -hex 10)
 		METADATA_PROXY_SHARED_SECRET=$(openssl rand -hex 25)
+
+		VCPU_PIN_SET='1-11,13-23,25-35,37-47'
 
 		CINDER_ISCSI_DRIVE='/dev/sdb'
 		CINDER_ISCSI_PARTITION='/dev/sdb1'
@@ -192,6 +194,8 @@ function __set_config_variables()
 		metering_secret=${METERING_SECRET:-UNDEFINED}
 		metadata_proxy_shared_secret=${METADATA_PROXY_SHARED_SECRET:-JsbKCjKpysqW8WyBnvh2hmEnDCCa3c4v3WfKejBMLhdcDfVZbt}
 
+		vcpu_pin_set=${VCPU_PIN_SET}
+
 		cinder_iscsi_drive=${CINDER_ISCSI_DRIVE:-/dev/sdb}
 		cinder_iscsi_partition=${CINDER_ISCSI_PARTITION:-/dev/sdb1}
 		manila_iscsi_drive=${MANILA_ISCSI_DRIVE:-/dev/sdc}
@@ -280,6 +284,8 @@ function __print_config()
 	ADMIN_TOKEN                     = "${admin_token}"
 	METERING_SECRET                 = "${metering_secret}"
 	METADATA_PROXY_SHARED_SECRET    = "${metadata_proxy_shared_secret}"
+
+	VCPU_PIN_SET  					= "${vcpu_pin_set}"
 
 	CINDER_ISCSI_DRIVE              = "${cinder_iscsi_drive}"
 	CINDER_ISCSI_PARTITION          = "${cinder_iscsi_partition}"

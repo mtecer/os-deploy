@@ -34,7 +34,19 @@ function deploy_l2_vlan_infrastructure_controller()
     __enable_service openvswitch
     __start_service openvswitch
 
-    __add_ovs_bridge_port br-provider ${vlan_nic}
+    _md5sum_original=$(md5sum /etc/sysconfig/network-scripts/ifcfg-br-provider)
+    (   echo 'DEVICE="br-provider"'
+        echo 'ONBOOT="yes"'
+        echo 'DEVICETYPE="ovs"'
+        echo 'TYPE="OVSBridge"'
+        echo 'BOOTPROTO="none"'
+        echo 'HOTPLUG="no"'
+     ) > /etc/sysconfig/network-scripts/ifcfg-br-provider
+    _md5sum_updated=$(md5sum /etc/sysconfig/network-scripts/ifcfg-br-provider)
+
+    if [[ ${_md5sum_original} != ${_md5sum_updated} ]]; then
+        __restart_service network
+    fi
 
     __enable_service neutron-openvswitch-agent
     __start_service neutron-openvswitch-agent
@@ -58,7 +70,7 @@ function deploy_l2_vlan_infrastructure_compute()
     __enable_service openvswitch
     __start_service openvswitch
 
-    __add_ovs_bridge_port br-provider ${vlan_nic}
+    # __add_ovs_bridge_port br-provider ${vlan_nic}
 
     __enable_service neutron-openvswitch-agent
     __enable_service neutron-netns-cleanup

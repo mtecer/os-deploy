@@ -102,6 +102,12 @@ function install_nova_compute()
 
     openstack-config --set ${nova_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN'
 
+    if [[ ${vcpu_pin_set} ]]; then
+        openstack-config --set ${nova_config_file} DEFAULT vcpu_pin_set ${vcpu_pin_set}
+    else
+        openstack-config --del ${nova_config_file} DEFAULT vcpu_pin_set
+    fi
+
     openstack-config --set ${nova_config_file} glance api_servers http://${api_address}:9292
 
     openstack-config --set ${nova_config_file} oslo_concurrency lock_path /var/lib/nova/tmp
