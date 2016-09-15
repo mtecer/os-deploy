@@ -17,6 +17,8 @@ function install_heat()
     openstack-config --set ${heat_config_file} DEFAULT stack_domain_admin_password ${keystone_heat_domain_admin_password}
     openstack-config --set ${heat_config_file} DEFAULT stack_user_domain_name heat
 
+    openstack-config --set ${heat_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN'
+
     openstack-config --set ${heat_config_file} clients_keystone auth_uri ${protocol}://${api_address}:35357
 
     openstack-config --set ${heat_config_file} database connection "mysql+pymysql://heat:${mysql_heat_password}@${api_address}/heat"

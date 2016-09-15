@@ -23,8 +23,6 @@ function install_nova_api()
 
     __configure_oslo_messaging_rabbit ${nova_config_file}
 
-    openstack-config --set ${nova_config_file} DEFAULT verbose False
-
     openstack-config --set ${nova_config_file} DEFAULT enabled_apis 'osapi_compute,metadata'
     openstack-config --set ${nova_config_file} DEFAULT auth_strategy keystone
     openstack-config --set ${nova_config_file} DEFAULT my_ip ${my_ip}
@@ -37,6 +35,8 @@ function install_nova_api()
     openstack-config --set ${nova_config_file} DEFAULT metadata_listen 127.0.0.1
 
     openstack-config --set ${nova_config_file} DEFAULT scheduler_default_filters 'RetryFilter,AvailabilityZoneFilter,RamFilter,DiskFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,NUMATopologyFilter,AggregateInstanceExtraSpecsFilter'
+
+    openstack-config --set ${nova_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN'
 
     openstack-config --set ${nova_config_file} api_database connection "mysql+pymysql://nova:${mysql_nova_password}@${api_address}/nova_api"
 
@@ -99,6 +99,8 @@ function install_nova_compute()
     openstack-config --set ${nova_config_file} DEFAULT use_neutron True
     openstack-config --set ${nova_config_file} DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
     openstack-config --set ${nova_config_file} DEFAULT rpc_backend rabbit
+
+    openstack-config --set ${nova_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN'
 
     openstack-config --set ${nova_config_file} glance api_servers http://${api_address}:9292
 

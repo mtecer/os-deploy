@@ -59,7 +59,7 @@ function install_neutron_api()
 
     openstack-config --set ${neutron_config_file} DEFAULT bind_host 127.0.0.1
 
-    openstack-config --set ${neutron_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=INFO,oslo.messaging=INFO,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=INFO,dogpile.core.dogpile=INFO,neutron.wsgi=WARN'
+    openstack-config --set ${neutron_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,neutron.wsgi=WARN'
 
     openstack-config --set ${neutron_config_file} database connection "mysql+pymysql://neutron:${mysql_neutron_password}@${api_address}/neutron"
 
@@ -104,6 +104,8 @@ function install_neutron_compute()
     openstack-config --set ${neutron_config_file} DEFAULT notify_nova_on_port_data_changes True
     openstack-config --set ${neutron_config_file} DEFAULT rpc_backend rabbit
     openstack-config --set ${neutron_config_file} DEFAULT service_plugins router
+
+    openstack-config --set ${neutron_config_file} DEFAULT default_log_levels 'amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=WARN,oslo.messaging=WARN,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=WARN,dogpile.core.dogpile=WARN,neutron.wsgi=WARN'
 
     openstack-config --set ${neutron_config_file} database connection "mysql+pymysql://neutron:${mysql_neutron_password}@${api_address}/neutron"
 
