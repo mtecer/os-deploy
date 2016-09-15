@@ -183,7 +183,7 @@ function configure_endpoints()
 		fi
 	fi
 
-	if [[ "${MANILA}" == true ]]; then
+	if [[ "${MURANO}" == true ]]; then
 		print -n "\tMurano"
 
 		openstack service show murano > /dev/null 2>&1
