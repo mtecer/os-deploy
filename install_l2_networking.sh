@@ -80,6 +80,10 @@ function deploy_l2_vlan_infrastructure_compute()
      ) > /etc/sysconfig/network-scripts/ifcfg-br-provider
     _md5sum_updated=$(md5sum /etc/sysconfig/network-scripts/ifcfg-br-provider)
 
+    if [[ ${_md5sum_original} != ${_md5sum_updated} ]]; then
+        __restart_service network
+    fi
+
     __enable_service neutron-openvswitch-agent
     __enable_service neutron-netns-cleanup
     __enable_service neutron-ovs-cleanup
