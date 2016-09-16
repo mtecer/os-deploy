@@ -50,7 +50,7 @@ function install_dashboard()
 	}
 
 	OPENSTACK_CINDER_FEATURES = {
-		'enable_backup': True,
+		'enable_backup': False,
 	}
 
 	OPENSTACK_NEUTRON_NETWORK = {
