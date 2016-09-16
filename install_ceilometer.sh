@@ -33,7 +33,6 @@ function install_ceilometer_api()
 	openstack-config --set ${ceilometer_config_file} service_credentials interface internalURL
 	openstack-config --set ${ceilometer_config_file} service_credentials region_name RegionOne
 
-	# sed -i 's/interval: 600/interval: 30/g' /etc/ceilometer/pipeline.yaml
 	cat lib/ceilometer/pipeline.yaml > /etc/ceilometer/pipeline.yaml
 
 	__enable_service openstack-ceilometer-api
@@ -49,7 +48,7 @@ function install_ceilometer_api()
 	__configure_oslo_messaging_rabbit ${glance_api_config_file}
 
 	( systemctl is-active openstack-ceilometer-api openstack-ceilometer-notification openstack-ceilometer-central openstack-ceilometer-collector ) > /dev/null  2>&1
-	if [[ $? != 0 ]]; then
+	if [[ $? == 0 ]]; then
 		openstack-config --set ${glance_api_config_file} DEFAULT rpc_backend rabbit
 
 		openstack-config --set ${glance_api_config_file} oslo_messaging_notifications driver messagingv2
@@ -95,8 +94,6 @@ function install_ceilometer_compute()
 	openstack-config --set ${ceilometer_config_file} service_credentials interface internalURL
 	openstack-config --set ${ceilometer_config_file} service_credentials region_name RegionOne
 
-
-	# sed -i 's/interval: 600/interval: 30/g' /etc/ceilometer/pipeline.yaml
 	cat lib/ceilometer/pipeline.yaml > /etc/ceilometer/pipeline.yaml
 
 	openstack-config --set ${nova_config_file} DEFAULT instance_usage_audit True

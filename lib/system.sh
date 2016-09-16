@@ -358,11 +358,6 @@ function configure_environment()
 	grep -q 'Namespaces=' /root/.bashrc || ( echo "alias Namespaces='ip netns | while read ns; do echo -e \"\n$ns\"; ip netns exec $ns /usr/sbin/ip addr show; done | egrep -v \"inet6|127.0.0.1\" | egrep \"^q|^$|inet\"'" >> /root/.bashrc )
 	grep -q 'export PS1' /root/.bashrc || ( echo "export PS1='\[\033[01;31m\]\h\[\033[01;34m\] \W \\$\[\033[00m\] '" >> /root/.bashrc )
 
-	# /etc/profile
-	# export http_proxy=http://10.199.103.207:3128/
-	# export https_proxy=http://10.199.103.207:3128/
-	# export no_proxy='127.0.0.1,sandbox01,10.199.0.0/16'
-
 	grep -q '#includedir /etc/sudoers.d' /etc/sudoers || ( echo '#includedir /etc/sudoers.d' >> /etc/sudoers )
 
 	( rpm -q crudini htop || yum -y -q install crudini ) > /dev/null
