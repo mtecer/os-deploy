@@ -4,6 +4,12 @@ function configure_cinder_api()
 
     openstack-config --set ${cinder_config_file} DEFAULT osapi_volume_listen 127.0.0.1
 
+    if [[ ${cinder_default_volume_type} ]]; then
+        openstack-config --set ${cinder_config_file} DEFAULT default_volume_type ${cinder_default_volume_type}
+    else
+        openstack-config --del ${cinder_config_file} DEFAULT default_volume_type
+    fi
+
 	( su -s /bin/sh -c "cinder-manage db sync" cinder ) > /dev/null 2>&1
 
 	__enable_service openstack-cinder-api

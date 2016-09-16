@@ -104,6 +104,7 @@ function __generate_config_file()
 		CINDER_ISCSI_PARTITION='/dev/sdb1'
 		MANILA_ISCSI_DRIVE='/dev/sdc'
 		MANILA_ISCSI_PARTITION='/dev/sdc1'
+		# CINDER_DEFAULT_VOLUME_TYPE=''
 
 		HAPROXY_ADMIN_PASSWORD=$(__generate_password)
 
@@ -200,6 +201,7 @@ function __set_config_variables()
 		cinder_iscsi_partition=${CINDER_ISCSI_PARTITION:-/dev/sdb1}
 		manila_iscsi_drive=${MANILA_ISCSI_DRIVE:-/dev/sdc}
 		manila_iscsi_partition=${MANILA_ISCSI_PARTITION:-/dev/sdc1}
+		cinder_default_volume_type=${CINDER_DEFAULT_VOLUME_TYPE}
 
 		haproxy_admin_password=${HAPROXY_ADMIN_PASSWORD:-password}
 
@@ -291,6 +293,7 @@ function __print_config()
 	CINDER_ISCSI_PARTITION          = "${cinder_iscsi_partition}"
 	MANILA_ISCSI_DRIVE              = "${manila_iscsi_drive}"
 	MANILA_ISCSI_PARTITION          = "${manila_iscsi_partition}"
+	CINDER_DEFAULT_VOLUME_TYPE		= "${cinder_default_volume_type}"
 
 	HAPROXY_ADMIN_PASSWORD			= "${haproxy_admin_password}"
 
